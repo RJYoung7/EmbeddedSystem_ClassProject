@@ -62,6 +62,7 @@ extern void vT2InterruptHandler( void );
 extern void vT3InterruptHandler( void );
 extern void vEMAC_ISR( void );
 extern void Timer0IntHandler( void );
+extern void Timer1IntHandler( void );
 
 //*****************************************************************************
 //
@@ -134,7 +135,7 @@ __root const uVectorEntry __vector_table[] @ ".intvec" =
     IntDefaultHandler,                      // Watchdog timer
     Timer0IntHandler,                       // Timer 0 subtimer A
     IntDefaultHandler,                      // Timer 0 subtimer B
-    IntDefaultHandler,                      // Timer 1 subtimer A
+    Timer1IntHandler,                      // Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B
     vT2InterruptHandler,                      // Timer 2 subtimer A
     IntDefaultHandler,                      // Timer 2 subtimer B

@@ -131,12 +131,16 @@ and the TCP/IP stack together cannot be accommodated with the 32K size limit. */
 #include "hw_memmap.h"
 #include "hw_types.h"
 #include "hw_sysctl.h"
+#include "inc/hw_ints.h"
 #include "sysctl.h"
 #include "gpio.h"
 #include "grlib.h"
 #include "rit128x96x4.h"
 #include "osram128x64x4.h"
 #include "formike128x128x16.h"
+#include "driverlib/interrupt.h"
+#include "driverlib/timer.h"
+#include "driverlib/systick.h"
 
 /* Demo app includes. */
 //#include "BlockQ.h"
@@ -155,6 +159,20 @@ and the TCP/IP stack together cannot be accommodated with the 32K size limit. */
 //#include "IntQueue.h"
 //#include "QueueSet.h"
 //#include "EventGroupsDemo.h"
+
+/* Task includes */
+#include "measureTask.h"
+#include "computeTask.h"
+#include "displayTask.h"
+#include "serialComTask.h"
+#include "warningAlarm.h"
+#include "Flags.h"
+#include "systemTimeBase.h"
+
+/* Datastruct includes */
+#include "dataPtrs.h"
+#include "dataStructs.c"
+
 
 /*-----------------------------------------------------------*/
 
@@ -198,6 +216,131 @@ the jitter time in nano seconds. */
 
 /*-----------------------------------------------------------*/
 
+// Global counters
+unsigned volatile int globalCounter = 0;
+unsigned int auralCounter = 0;
+unsigned int pulseFreq=4;
+unsigned int pulseCount=0;
+unsigned long g_ulFlagPR=0;
+
+//*****************************************************************************
+//
+// Flags that contain the current value of the interrupt indicator as displayed
+// on the OLED display.
+//
+//*****************************************************************************
+unsigned long g_ulFlags;
+unsigned long auralFlag;
+unsigned long computeFlag;
+unsigned long serialFlag;
+
+//  Declare the globals
+INIT_MEASUREMENT2(m2);
+INIT_DISPLAY2(d2);
+INIT_STATUS(s1);
+INIT_ALARMS(a1);
+INIT_WARNING(w1);
+INIT_SCHEDULER(c1);
+INIT_KEYPAD(k1);
+
+//Connect pointer structs to data
+measureData2 mPtrs2 = 
+{     
+  m2.temperatureRawBuf,
+  m2.bloodPressRawBuf,
+  m2.pulseRateRawBuf,
+  &m2.countCalls,
+  &m2.sysComplete,
+  &m2.diaComplete,
+  &m2.tempDirection,
+  &g_ulFlagPR
+};
+
+computeData2 cPtrs2=
+{
+  m2.temperatureRawBuf,
+  m2.bloodPressRawBuf,
+  m2.pulseRateRawBuf,
+  d2.tempCorrectedBuf,
+  d2.bloodPressCorrectedBuf,
+  d2.pulseRateCorrectedBuf,
+  &k1.measurementSelection,
+  &m2.countCalls
+};
+
+displayData2 dPtrs2=
+{
+  d2.tempCorrectedBuf,
+  d2.bloodPressCorrectedBuf,
+  d2.pulseRateCorrectedBuf,
+  &s1.batteryState,
+  &m2.countCalls,
+  &k1.mode,
+  &a1.tempOutOfRange,
+  &a1.bpOutOfRange,
+  &a1.pulseOutOfRange
+  
+};
+
+warningAlarmData2 wPtrs2=
+{
+  m2.temperatureRawBuf,
+  m2.bloodPressRawBuf,
+  m2.pulseRateRawBuf,
+  &s1.batteryState,
+  &a1.bpOutOfRange,
+  &a1.tempOutOfRange,
+  &a1.pulseOutOfRange,
+  &w1.bpHigh,
+  &w1.tempHigh,
+  &w1.pulseLow,
+  &w1.led,
+  &m2.countCalls,
+  &w1.previousCount,
+  &w1.pulseFlash,
+  &w1.tempFlash,
+  &w1.bpFlash,
+  &w1.auralCount
+};
+
+keypadData kPtrs=
+{
+  &k1.mode,
+  &k1.measurementSelection,
+  &k1.scroll,
+  &k1.selectChoice,
+  &k1.alarmAcknowledge
+
+};
+
+statusData sPtrs=
+{  
+  &s1.batteryState
+};
+
+schedulerData schedPtrs=
+{
+  &c1.globalCounter
+};
+
+communicationsData comPtrs={
+  d2.tempCorrectedBuf,
+  d2.bloodPressCorrectedBuf,
+  d2.pulseRateCorrectedBuf,
+  &s1.batteryState,
+  &m2.countCalls
+};
+
+//Declare the prototypes for the tasks
+void compute(void* data);
+void measure(void* data);
+void stat(void* data);
+void alarm(void* data);
+void disp(void* data);
+void schedule(void* data);
+void keypadfunction(void* data);
+void startup();
+
 /*
  * The task that handles the uIP stack.  All TCP/IP processing is performed in
  * this task.
@@ -221,7 +364,7 @@ static void prvSetupHardware( void );
  * Configures the high frequency timers - those used to measure the timing
  * jitter while the real time kernel is executing.
  */
-extern void vSetupHighFrequencyTimer( void );
+//extern void vSetupHighFrequencyTimer( void );
 
 /*
  * Hook functions that can get called by the kernel.
@@ -243,6 +386,59 @@ void vTask1(void *vParameters);
 
 /*-----------------------------------------------------------*/
 
+//*****************************************************************************
+//
+// The interrupt handler for the first timer interrupt.
+//
+//*****************************************************************************
+//void
+//Timer0IntHandler(void)
+//{
+//    // Clear the timer interrupt.
+//    TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
+//
+//    // Update the global counter.
+//    IntMasterDisable();
+//    increment();
+//    IntMasterEnable();
+//}
+
+//*****************************************************************************
+//
+// The interrupt handler for the pulse rate transducer interrupt.
+//
+//*****************************************************************************
+void
+Timer1IntHandler(void)
+{
+    // Clear the timer interrupt.
+    TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
+    
+    pulseCount++;
+        
+    if(pulseCount>20){
+      pulseFreq=3;
+    }
+    else if(pulseCount >40){
+      pulseFreq = 2;
+    }
+    else if(pulseCount >60){
+      pulseFreq=1;
+    }
+    else if (pulseCount>80){
+      pulseFreq =4;
+      pulseCount =0;
+    }
+    
+    TimerLoadSet(TIMER1_BASE, TIMER_A, (SysCtlClockGet()/pulseFreq)/2-1);
+
+    // Update PR Flag
+    if(g_ulFlagPR==0){
+      g_ulFlagPR=1;
+    }
+    else
+      g_ulFlagPR=0;
+}
 
 /*************************************************************************
  * Please ensure to read http://www.freertos.org/portlm3sx965.html
@@ -257,7 +453,7 @@ int main( void )
 	are received via this queue. */
 	xOLEDQueue = xQueueCreate( mainOLED_QUEUE_SIZE, sizeof( xOLEDMessage ) );
         xTaskCreate(vTask1, "Task 1", 100, NULL, 1, NULL);
-
+        xTaskCreate(measure, "Measure Task", 1024, (void*)&mPtrs2, 2, NULL);
 	/* Exclude some tasks if using the kickstart version to ensure we stay within
 	the 32K code size limit. */
 	#if mainINCLUDE_WEB_SERVER != 1
@@ -275,11 +471,11 @@ int main( void )
 
 	/* Start the tasks defined within this file/specific to this demo. */
 	xTaskCreate( vOLEDTask, "OLED", mainOLED_TASK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
-
+        
 
 	/* Configure the high frequency interrupt used to measure the interrupt
 	jitter time. */
-	vSetupHighFrequencyTimer();
+	//vSetupHighFrequencyTimer();
 
 	/* Start the scheduler. */
 	vTaskStartScheduler();
@@ -307,9 +503,12 @@ void vTask1(void *vParameters)
     vTaskDelay(1000);
   }
 }
-
+  
 void prvSetupHardware( void )
 {
+    // Variables used for configurations
+  unsigned long ulPeriod;
+  unsigned long ulPeriodPR;
     /* If running on Rev A2 silicon, turn the LDO voltage up to 2.75V.  This is
     a workaround to allow the PLL to operate reliably. */
     if( DEVICE_IS_REVA2 )
@@ -326,6 +525,25 @@ void prvSetupHardware( void )
 	SysCtlPeripheralEnable( SYSCTL_PERIPH_GPIOF );
 	GPIODirModeSet( GPIO_PORTF_BASE, (GPIO_PIN_2 | GPIO_PIN_3), GPIO_DIR_MODE_HW );
 	GPIOPadConfigSet( GPIO_PORTF_BASE, (GPIO_PIN_2 | GPIO_PIN_3 ), GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD );
+        
+//          ulPeriodPR =(SysCtlClockGet()/4)/2 ;
+//  //**INITIALIZE TIMER INTERRUPT**//
+//  // Configure the 32-bit periodic timer.
+//  TimerConfigure(TIMER0_BASE, TIMER_CFG_32_BIT_PER);
+//  TimerConfigure(TIMER1_BASE, TIMER_CFG_32_BIT_PER);
+//  TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/10);
+//  TimerLoadSet(TIMER1_BASE, TIMER_A, ulPeriodPR-1);
+//
+//  // Setup the interrupt for the timer timeout.
+//  IntEnable(INT_TIMER0A);
+//  IntEnable(INT_TIMER1A);
+//  
+//  TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
+//  TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
+//  
+//  // Enable the timer.
+//  TimerEnable(TIMER0_BASE, TIMER_A);
+//  TimerEnable(TIMER1_BASE, TIMER_A);
 
 	vParTestInitialise();
 }
@@ -415,7 +633,7 @@ void vOLEDTask( void *pvParameters )
 xOLEDMessage xMessage;
 unsigned long ulY, ulMaxY;
 static char cMessage[ mainMAX_MSG_LEN ];
-extern volatile unsigned long ulMaxJitter;
+//extern volatile unsigned long ulMaxJitter;
 const unsigned char *pucImage;
 
 /* Functions to access the OLED.  The one used depends on the dev kit
@@ -480,7 +698,7 @@ void ( *vOLEDClear )( void ) = NULL;
 
 		/* Display the message along with the maximum jitter time from the
 		high priority time test. */
-		sprintf( cMessage, "%s [%uns]", xMessage.pcMessage, ulMaxJitter * mainNS_PER_CLOCK );
+		//sprintf( cMessage, "%s [%uns]", xMessage.pcMessage, ulMaxJitter * mainNS_PER_CLOCK );
 		vOLEDStringDraw( cMessage, 0, ulY, mainFULL_SCALE );
 	}
 }
