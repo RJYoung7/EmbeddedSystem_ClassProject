@@ -2,10 +2,13 @@
 #include "dataStructs.c"
 #include "dataPtrs.c"
 #include "systemTimeBase.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
  void stat(void *data) {
 
-
+  for( ;; )
+  {
      //printf("\n CHECKING STATUS! \n");
     // Recast task argument pointer to task’s data structure type
     statusData*word=(statusData*)data;
@@ -15,7 +18,9 @@
     if (*temp3 !=0 )	 
     --*temp3;//= *temp3 - 1;
     //(*word).batteryStatePtr = (unsigned char *)(*temp3);
-	return;
+    vTaskDelay(5000);
+  }
+  //return;
 
  }
 	

@@ -2,10 +2,14 @@
 #include "dataStructs.c"
 #include "systemTimeBase.h"
 #include "Flags.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 void compute(void *data)
 {
 
+  for( ;; )
+  {
   // Cast struct
   computeData2* cData =(computeData2*)data;
   
@@ -25,6 +29,9 @@ void compute(void *data)
   (cData->pulseRateCorrectedBufPtr[index]) = (unsigned char)(8 + (3 * (cData->pulseRateRawBufPtr[index])));
   
   // Designate for deletion
+  vTaskSuspend( NULL );
   computeFlag = 2;
-  return;
+  //vTaskDelay(5000);
+  }
+  //return;
 }

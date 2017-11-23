@@ -128,19 +128,20 @@ and the TCP/IP stack together cannot be accommodated with the 32K size limit. */
 #include "semphr.h"
 
 /* Hardware library includes. */
-#include "hw_memmap.h"
-#include "hw_types.h"
+//#include "hw_memmap.h"
+//#include "hw_types.h"
 #include "hw_sysctl.h"
-#include "inc/hw_ints.h"
-#include "sysctl.h"
-#include "gpio.h"
+//#include "inc/hw_ints.h"
+//#include "sysctl.h"
+//#include "gpio.h"
 #include "grlib.h"
 #include "rit128x96x4.h"
 #include "osram128x64x4.h"
 #include "formike128x128x16.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/timer.h"
-#include "driverlib/systick.h"
+//#include "driverlib/interrupt.h"
+//#include "driverlib/timer.h"
+//#include "driverlib/systick.h"
+//#include "driverlib/pwm.h"
 
 /* Demo app includes. */
 //#include "BlockQ.h"
@@ -161,17 +162,45 @@ and the TCP/IP stack together cannot be accommodated with the 32K size limit. */
 //#include "EventGroupsDemo.h"
 
 /* Task includes */
-#include "measureTask.h"
-#include "computeTask.h"
-#include "displayTask.h"
-#include "serialComTask.h"
-#include "warningAlarm.h"
-#include "Flags.h"
-#include "systemTimeBase.h"
+//#include "measureTask.h"
+//#include "computeTask.h"
+//#include "displayTask.h"
+//#include "serialComTask.h"
+//#include "warningAlarm.h"
+//#include "Flags.h"
+//#include "systemTimeBase.h"
 
 /* Datastruct includes */
+//#include "dataPtrs.h"
+//#include "dataStructs.c"
+
+/* Project 3 */
+#include "inc/hw_types.h"
+#include "computeTask.h"
 #include "dataPtrs.h"
+#include "displayTask.h"
+#include "driverlib/debug.h"
+#include "driverlib/gpio.h"
+#include "driverlib/interrupt.h"
+#include "driverlib/timer.h"
+#include "driverlib/pwm.h"
+#include "drivers/rit128x96x4.h"
+#include "driverlib/sysctl.h"
+#include "driverlib/systick.h"
+#include "driverlib/uart.h"
 #include "dataStructs.c"
+#include "inc/hw_ints.h"
+#include "inc/hw_memmap.h"
+//#include "inc/lm3s8962.h"
+#include "measureTask.h"
+#include "serialComTask.h"
+#include "systemTimeBase.h"
+#include "warningAlarm.h"
+#include "Flags.h"
+
+#include <time.h>
+
+#define CLOCK_RATE      300
 
 
 /*-----------------------------------------------------------*/
@@ -233,6 +262,17 @@ unsigned long g_ulFlags;
 unsigned long auralFlag;
 unsigned long computeFlag;
 unsigned long serialFlag;
+TaskHandle_t xComputeHandle;
+
+//*****************************************************************************
+//
+// The speed of the processor.
+//
+//*****************************************************************************
+
+unsigned long g_ulSystemClock;
+
+unsigned char g_ucSwitches = 0x1f;
 
 //  Declare the globals
 INIT_MEASUREMENT2(m2);
@@ -364,7 +404,7 @@ static void prvSetupHardware( void );
  * Configures the high frequency timers - those used to measure the timing
  * jitter while the real time kernel is executing.
  */
-//extern void vSetupHighFrequencyTimer( void );
+extern void vSetupHighFrequencyTimer( void );
 
 /*
  * Hook functions that can get called by the kernel.
@@ -391,17 +431,17 @@ void vTask1(void *vParameters);
 // The interrupt handler for the first timer interrupt.
 //
 //*****************************************************************************
-//void
-//Timer0IntHandler(void)
-//{
-//    // Clear the timer interrupt.
-//    TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
-//
-//    // Update the global counter.
-//    IntMasterDisable();
-//    increment();
-//    IntMasterEnable();
-//}
+void
+Timer0IntHandler(void)
+{
+    // Clear the timer interrupt.
+    TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
+
+    // Update the global counter.
+    IntMasterDisable();
+    increment();
+    IntMasterEnable();
+}
 
 //*****************************************************************************
 //
@@ -440,6 +480,7 @@ Timer1IntHandler(void)
       g_ulFlagPR=0;
 }
 
+
 /*************************************************************************
  * Please ensure to read http://www.freertos.org/portlm3sx965.html
  * which provides information on configuring and running this demo for the
@@ -447,13 +488,21 @@ Timer1IntHandler(void)
  *************************************************************************/
 int main( void )
 {
+        
 	prvSetupHardware();
 
 	/* Create the queue used by the OLED task.  Messages for display on the OLED
 	are received via this queue. */
 	xOLEDQueue = xQueueCreate( mainOLED_QUEUE_SIZE, sizeof( xOLEDMessage ) );
-        xTaskCreate(vTask1, "Task 1", 100, NULL, 1, NULL);
-        xTaskCreate(measure, "Measure Task", 1024, (void*)&mPtrs2, 2, NULL);
+        
+        // Create tasks
+        xTaskCreate(measure, "Measure Task", 500, (void*)&mPtrs2, 4, NULL);
+        xTaskCreate(alarm, "Warning Task", 500, (void*)&wPtrs2, 3, NULL);
+        xTaskCreate(stat, "Status Task", 1024, (void*)&sPtrs, 3, NULL);
+        xTaskCreate(compute, "Compute Task", 1024, (void*)&cPtrs2, 2, &xComputeHandle);
+        xTaskCreate(disp, "Display Task", 1024, (void*)&dPtrs2, 1, NULL);
+        //xTaskCreate(keypadfunction, "Keypad Task", 1024, (void*)&kPtrs, 1, NULL);
+        
 	/* Exclude some tasks if using the kickstart version to ensure we stay within
 	the 32K code size limit. */
 	#if mainINCLUDE_WEB_SERVER != 1
@@ -485,24 +534,6 @@ int main( void )
 	return 0;
 }
 /*-----------------------------------------------------------*/
-
-void vTask1(void *vParameters)
-{
-  // test message to display
-  xOLEDMessage xMessage;
-  
-  xMessage.pcMessage = "Hello from, Task1";
-  
-  // all tasks run in an infinite loop
-  while(1)
-  {
-    // Send the message to the OLED gatekeeper for display.
-    xQueueSend(xOLEDQueue, &xMessage, 0);
-    
-    // delay to force a context switch
-    vTaskDelay(1000);
-  }
-}
   
 void prvSetupHardware( void )
 {
@@ -516,34 +547,104 @@ void prvSetupHardware( void )
         SysCtlLDOSet( SYSCTL_LDO_2_75V );
     }
 
-	/* Set the clocking to run from the PLL at 50 MHz */
-	SysCtlClockSet( SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ );
+    /* Set the clocking to run from the PLL at 50 MHz */
+    SysCtlClockSet( SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ );
 
-	/* 	Enable Port F for Ethernet LEDs
-		LED0        Bit 3   Output
-		LED1        Bit 2   Output */
-	SysCtlPeripheralEnable( SYSCTL_PERIPH_GPIOF );
-	GPIODirModeSet( GPIO_PORTF_BASE, (GPIO_PIN_2 | GPIO_PIN_3), GPIO_DIR_MODE_HW );
-	GPIOPadConfigSet( GPIO_PORTF_BASE, (GPIO_PIN_2 | GPIO_PIN_3 ), GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD );
-        
+    /* 	Enable Port F for Ethernet LEDs
+            LED0        Bit 3   Output
+            LED1        Bit 2   Output 
+    */
+    
+    g_ulSystemClock = SysCtlClockGet();
+    
+    // Enable the peripherals used by this example.
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER2); 
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOG);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+    
+    //GPIODirModeSet( GPIO_PORTF_BASE, (GPIO_PIN_2 | GPIO_PIN_3), GPIO_DIR_MODE_HW );
+    //GPIOPadConfigSet( GPIO_PORTF_BASE, (GPIO_PIN_2 | GPIO_PIN_3 ), GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD );
+      
+    // Configure the GPIO used to output the state of the led
+    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_0);
+    
+    //**INITIALIZE BUTTONS**//
+    // Configure the GPIOs used to read the state of the on-board push buttons.
+    GPIOPinTypeGPIOInput(GPIO_PORTE_BASE,
+                         GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
+    GPIOPadConfigSet(GPIO_PORTE_BASE,
+                     GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3,
+                     GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+    GPIOPinTypeGPIOInput(GPIO_PORTF_BASE, GPIO_PIN_1);
+    GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_STRENGTH_2MA,
+                     GPIO_PIN_TYPE_STD_WPU);
+    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0);
+    
+  // Configure SysTick to periodically interrupt.
+  SysTickPeriodSet(g_ulSystemClock / CLOCK_RATE);
+  SysTickIntEnable();
+  SysTickEnable();
+  
+  //**INITIALIZE UART**//
+  // Configure the GPIO for the UART
+  GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+     
+  // Set the configuration of the UART
+  UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 460800,
+                        (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
+                         UART_CONFIG_PAR_NONE));
+	
+  ulPeriodPR =(SysCtlClockGet()/4)/2 ;
+
 //          ulPeriodPR =(SysCtlClockGet()/4)/2 ;
 //  //**INITIALIZE TIMER INTERRUPT**//
 //  // Configure the 32-bit periodic timer.
-//  TimerConfigure(TIMER0_BASE, TIMER_CFG_32_BIT_PER);
-//  TimerConfigure(TIMER1_BASE, TIMER_CFG_32_BIT_PER);
-//  TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/10);
+  TimerConfigure(TIMER0_BASE, TIMER_CFG_32_BIT_PER);
+// TimerConfigure(TIMER1_BASE, TIMER_CFG_32_BIT_PER);
+  TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/100);
 //  TimerLoadSet(TIMER1_BASE, TIMER_A, ulPeriodPR-1);
 //
 //  // Setup the interrupt for the timer timeout.
-//  IntEnable(INT_TIMER0A);
+  IntEnable(INT_TIMER0A);
 //  IntEnable(INT_TIMER1A);
 //  
-//  TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
+  TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
 //  TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
 //  
 //  // Enable the timer.
-//  TimerEnable(TIMER0_BASE, TIMER_A);
+  TimerEnable(TIMER0_BASE, TIMER_A);
 //  TimerEnable(TIMER1_BASE, TIMER_A);
+  
+  //**INITIAL SOUND WARNING**//
+  // Set GPIO G1 as PWM pin.  They are used to output the PWM1 signal.
+  GPIOPinTypePWM(GPIO_PORTG_BASE, GPIO_PIN_1);
+  
+  // Compute the PWM period based on the system clock.
+  ulPeriod = SysCtlClockGet() / 440;
+  
+  // Set the PWM period to 440 (A) Hz.
+  PWMGenConfigure(PWM_BASE, PWM_GEN_0,
+                    PWM_GEN_MODE_UP_DOWN | PWM_GEN_MODE_NO_SYNC);
+  PWMGenPeriodSet(PWM_BASE, PWM_GEN_0, ulPeriod);
+
+  // PWM1 to a duty cycle of 75%.
+  PWMPulseWidthSet(PWM_BASE, PWM_OUT_1, ulPeriod * 3 / 4);
+
+  // Enable the PWM1 output signal.
+  PWMOutputState(PWM_BASE,PWM_OUT_1_BIT, true);
+  
+  // Enable processor interrupts.
+  IntMasterEnable();
+  
+  // Turn on LED to indicate normal state
+  enableVisibleAnnunciation();
 
 	vParTestInitialise();
 }
@@ -552,154 +653,72 @@ void prvSetupHardware( void )
 void vApplicationTickHook( void )
 {
 
-static unsigned long ulTicksSinceLastDisplay = 0;
-//portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+  static xOLEDMessage xMessage = { "PASS" };
+  static unsigned long ulTicksSinceLastDisplay = 0;
+  portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
-	/* Called from every tick interrupt.  Have enough ticks passed to make it
-	time to perform our health status check again? */
-	ulTicksSinceLastDisplay++;
-	if( ulTicksSinceLastDisplay >= mainCHECK_DELAY )
-	{
-		ulTicksSinceLastDisplay = 0;
+  /* Called from every tick interrupt.  Have enough ticks passed to make it
+  time to perform our health status check again? */
 
-//		/* Has an error been found in any task? */
-//		if( xAreGenericQueueTasksStillRunning() != pdTRUE )
-//		{
-//			xMessage.pcMessage = "ERROR IN GEN Q";
-//		}
-//	    else if( xIsCreateTaskStillRunning() != pdTRUE )
-//	    {
-//	        xMessage.pcMessage = "ERROR IN CREATE";
-//	    }
-//	    else if( xAreIntegerMathsTaskStillRunning() != pdTRUE )
-//	    {
-//	        xMessage.pcMessage = "ERROR IN MATH";
-//	    }
-//		else if( xAreIntQueueTasksStillRunning() != pdTRUE )
-//		{
-//			xMessage.pcMessage = "ERROR IN INT QUEUE";
-//		}
-//		else if( xAreBlockingQueuesStillRunning() != pdTRUE )
-//		{
-//			xMessage.pcMessage = "ERROR IN BLOCK Q";
-//		}
-//		else if( xAreBlockTimeTestTasksStillRunning() != pdTRUE )
-//		{
-//			xMessage.pcMessage = "ERROR IN BLOCK TIME";
-//		}
-//		else if( xAreSemaphoreTasksStillRunning() != pdTRUE )
-//		{
-//			xMessage.pcMessage = "ERROR IN SEMAPHORE";
-//		}
-//		else if( xArePollingQueuesStillRunning() != pdTRUE )
-//		{
-//			xMessage.pcMessage = "ERROR IN POLL Q";
-//		}
-//		else if( xAreQueuePeekTasksStillRunning() != pdTRUE )
-//		{
-//			xMessage.pcMessage = "ERROR IN PEEK Q";
-//		}
-//		else if( xAreRecursiveMutexTasksStillRunning() != pdTRUE )
-//		{
-//			xMessage.pcMessage = "ERROR IN REC MUTEX";
-//		}
-//		else if( xAreQueueSetTasksStillRunning() != pdPASS )
-//		{
-//			xMessage.pcMessage = "ERROR IN Q SET";
-//		}
-//		else if( xAreEventGroupTasksStillRunning() != pdTRUE )
-//		{
-//			xMessage.pcMessage = "ERROR IN EVNT GRP";
-//		}
+  ulTicksSinceLastDisplay++;
+  if( ulTicksSinceLastDisplay >= mainCHECK_DELAY )
+  {
+          ulTicksSinceLastDisplay = 0;
 
-//		configASSERT( strcmp( ( const char * ) xMessage.pcMessage, "PASS" ) == 0 );
-//
-//		/* Send the message to the OLED gatekeeper for display. */
-//		xHigherPriorityTaskWoken = pdFALSE;
-//		xQueueSendFromISR( xOLEDQueue, &xMessage, &xHigherPriorityTaskWoken );
-	}
-
-	/* Write to a queue that is in use as part of the queue set demo to
-	demonstrate using queue sets from an ISR. */
-	//vQueueSetAccessQueueSetFromISR();
-
-	/* Call the event group ISR tests. */
-	//vPeriodicEventGroupsProcessing();
+  }
 }
 /*-----------------------------------------------------------*/
 
 void vOLEDTask( void *pvParameters )
 {
-xOLEDMessage xMessage;
-unsigned long ulY, ulMaxY;
-static char cMessage[ mainMAX_MSG_LEN ];
-//extern volatile unsigned long ulMaxJitter;
-const unsigned char *pucImage;
+  xOLEDMessage xMessage;
+  unsigned long ulY, ulMaxY;
+  static char cMessage[ mainMAX_MSG_LEN ];
+  extern volatile unsigned long ulMaxJitter;
+  const unsigned char *pucImage;
 
-/* Functions to access the OLED.  The one used depends on the dev kit
-being used. */
-void ( *vOLEDInit )( unsigned long ) = NULL;
-void ( *vOLEDStringDraw )( const char *, unsigned long, unsigned long, unsigned char ) = NULL;
-void ( *vOLEDImageDraw )( const unsigned char *, unsigned long, unsigned long, unsigned long, unsigned long ) = NULL;
-void ( *vOLEDClear )( void ) = NULL;
+  /* Functions to access the OLED.  The one used depends on the dev kit
+  being used. */
+  void ( *vOLEDInit )( unsigned long ) = NULL;
+  void ( *vOLEDStringDraw )( const char *, unsigned long, unsigned long, unsigned char ) = NULL;
+  void ( *vOLEDImageDraw )( const unsigned char *, unsigned long, unsigned long, unsigned long, unsigned long ) = NULL;
+  void ( *vOLEDClear )( void ) = NULL;
 
-	/* Map the OLED access functions to the driver functions that are appropriate
-	for the evaluation kit being used. */
-	switch( HWREG( SYSCTL_DID1 ) & SYSCTL_DID1_PRTNO_MASK )
-	{
-		case SYSCTL_DID1_PRTNO_6965	:
-		case SYSCTL_DID1_PRTNO_2965	:	vOLEDInit = OSRAM128x64x4Init;
-										vOLEDStringDraw = OSRAM128x64x4StringDraw;
-										vOLEDImageDraw = OSRAM128x64x4ImageDraw;
-										vOLEDClear = OSRAM128x64x4Clear;
-										ulMaxY = mainMAX_ROWS_64;
-										pucImage = pucBasicBitmap;
-										break;
+  /* Map the OLED access functions to the driver functions that are appropriate
+  for the evaluation kit being used. */
+  vOLEDInit = RIT128x96x4Init;
+  vOLEDStringDraw = RIT128x96x4StringDraw;
+  vOLEDImageDraw = RIT128x96x4ImageDraw;
+  vOLEDClear = RIT128x96x4Clear;
+  ulMaxY = mainMAX_ROWS_96;
+  pucImage = pucBasicBitmap;
 
-		case SYSCTL_DID1_PRTNO_1968	:
-		case SYSCTL_DID1_PRTNO_8962 :	vOLEDInit = RIT128x96x4Init;
-										vOLEDStringDraw = RIT128x96x4StringDraw;
-										vOLEDImageDraw = RIT128x96x4ImageDraw;
-										vOLEDClear = RIT128x96x4Clear;
-										ulMaxY = mainMAX_ROWS_96;
-										pucImage = pucBasicBitmap;
-										break;
 
-		default						:	vOLEDInit = vFormike128x128x16Init;
-										vOLEDStringDraw = vFormike128x128x16StringDraw;
-										vOLEDImageDraw = vFormike128x128x16ImageDraw;
-										vOLEDClear = vFormike128x128x16Clear;
-										ulMaxY = mainMAX_ROWS_128;
-										pucImage = pucGrLibBitmap;
-										break;
+  ulY = ulMaxY;
 
-	}
+  /* Initialise the OLED and display a startup message. */
+  vOLEDInit( ulSSI_FREQUENCY );
+  vOLEDStringDraw( "POWERED BY FreeRTOS", 0, 0, mainFULL_SCALE );
+  vOLEDImageDraw( pucImage, 0, mainCHARACTER_HEIGHT + 1, bmpBITMAP_WIDTH, bmpBITMAP_HEIGHT );
 
-	ulY = ulMaxY;
+  for( ;; )
+  {
+          /* Wait for a message to arrive that requires displaying. */
+          xQueueReceive( xOLEDQueue, &xMessage, portMAX_DELAY );
 
-	/* Initialise the OLED and display a startup message. */
-	vOLEDInit( ulSSI_FREQUENCY );
-	vOLEDStringDraw( "POWERED BY FreeRTOS", 0, 0, mainFULL_SCALE );
-	vOLEDImageDraw( pucImage, 0, mainCHARACTER_HEIGHT + 1, bmpBITMAP_WIDTH, bmpBITMAP_HEIGHT );
+          /* Write the message on the next available row. */
+          ulY += mainCHARACTER_HEIGHT;
+          if( ulY >= ulMaxY )
+          {
+                  ulY = mainCHARACTER_HEIGHT;
+                  vOLEDClear();
+                  vOLEDStringDraw( pcWelcomeMessage, 0, 0, mainFULL_SCALE );
+          }
 
-	for( ;; )
-	{
-		/* Wait for a message to arrive that requires displaying. */
-		xQueueReceive( xOLEDQueue, &xMessage, portMAX_DELAY );
-
-		/* Write the message on the next available row. */
-		ulY += mainCHARACTER_HEIGHT;
-		if( ulY >= ulMaxY )
-		{
-			ulY = mainCHARACTER_HEIGHT;
-			vOLEDClear();
-			vOLEDStringDraw( pcWelcomeMessage, 0, 0, mainFULL_SCALE );
-		}
-
-		/* Display the message along with the maximum jitter time from the
-		high priority time test. */
-		//sprintf( cMessage, "%s [%uns]", xMessage.pcMessage, ulMaxJitter * mainNS_PER_CLOCK );
-		vOLEDStringDraw( cMessage, 0, ulY, mainFULL_SCALE );
+          /* Display the message along with the maximum jitter time from the
+          high priority time test. */
+          sprintf( cMessage, "%s [%uns]", xMessage.pcMessage, ulMaxJitter * mainNS_PER_CLOCK );
+          vOLEDStringDraw( cMessage, 0, ulY, mainFULL_SCALE );
 	}
 }
 /*-----------------------------------------------------------*/

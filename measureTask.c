@@ -5,12 +5,16 @@
 #include "bool.h"
 #include "systemTimeBase.h"
 #include "Flags.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 
 void measure(void* data)
 {
+  for( ;; )
+  {
     measureData2 * measureDataPtr = (measureData2*) data;
-    
+ 
     measureTempArray(data);
     measureSysBPArray(data);
     measureDiaBPArray(data);
@@ -20,18 +24,23 @@ void measure(void* data)
     //increment the count entry
     ++(*(*measureDataPtr).countCallsPtr);
     
-    // If compute task is already in queue don't add
-    if(computeFlag == 1)
-    {
-      computeFlag = 0;
-    }
-    // Add compute to queue if new measurement is made
-    else
-    {
-    computeFlag = 1;
-    }
-
-  return;
+//    // If compute task is already in queue don't add
+//    if(computeFlag == 1)
+//    {
+//      computeFlag = 0;
+//    }
+//    // Add compute to queue if new measurement is made
+//    else
+//    {
+//    computeFlag = 1;
+//    }
+    
+    vTaskResume(xComputeHandle);
+    
+    // Delay for 5 seconds
+    vTaskDelay(5000);
+    
+  }
 }
 
 /*
@@ -156,7 +165,7 @@ void measurePRArray(void* data){
     measureData2* measureDataPtr = (measureData2*) data;
     unsigned int clock = globalCounter;//(*measureDataPtr).globalCounterPtr;
     unsigned int temp=clock;
-    while(clock<(temp+1)){
+    while(clock<(temp+100)){
         
         clock=globalCounter;//(*measureDataPtr).globalCounterPtr;
         unsigned long* beat=(*measureDataPtr).prPtr;

@@ -18,6 +18,8 @@ Code to enable and disable light referenced from Blinky.c from StellarisWare exa
 #include "driverlib/pwm.h"
 #include "driverlib/sysctl.h"
 #include "Flags.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 /*
 Function alarm
@@ -27,19 +29,23 @@ Do: Checks if vitals are out of range
 */
 void alarm(void *data)
 {
+  for( ;; )
+  {
   warningAlarmData2 * alarm = (warningAlarmData2*) data;
   
   // Call functions
   checkWarnings(data);
-  annunciate(data);
-  auralAnnunciate(data);
+  //annunciate(data);
+  //auralAnnunciate(data);
   
    // Add serial to queue if warning has occurred
   if((*(alarm->tempHighPtr)) || (*(alarm->pulseLowPtr)) || (*(alarm->bpHighPtr)))
   {
     serialFlag = 1;
   }
-  return;
+  vTaskDelay(10);
+  }
+  //return;
 }
 
 /*

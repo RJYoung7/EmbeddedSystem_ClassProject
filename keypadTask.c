@@ -5,6 +5,8 @@
 #include "inc/hw_types.h"
 #include "drivers/rit128x96x4.h"
 #include "Flags.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 extern unsigned long g_ulFlags;//extern unsigned long g_ulFlags;
 #define FLAG_CLOCK_TICK         0           // A timer interrupt has occurred
@@ -22,6 +24,8 @@ extern unsigned char g_ucSwitches;
 
 void keypadfunction(void* data)
 {
+  for( ;; )
+  {
     //cast the data to a keypadData struct
     keypadData * keypadDataPtr = (keypadData*) data;
     /*
@@ -120,5 +124,7 @@ void keypadfunction(void* data)
     if(HWREGBITW(&g_ulFlags, FLAG_BUTTON_PRESS)){
       HWREGBITW(&g_ulFlags, FLAG_BUTTON_PRESS) = 0;  
     }
-  return;
+    vTaskDelay(5000);
+  }
+  //return;
 }

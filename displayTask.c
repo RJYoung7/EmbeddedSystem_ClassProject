@@ -4,6 +4,8 @@
 #include "drivers/rit128x96x4.h"
 #include "systemTimeBase.h"
 #include "utils/ustdlib.c"
+#include "FreeRTOS.h"
+#include "task.h"
 
 extern unsigned char g_ucSwitches;
 
@@ -15,28 +17,32 @@ Do: Determines which menu to display
 */
 void disp(void* data)
 {  
+  for( ;; )
+  {
     displayData2 * dData = (displayData2*)data;
     
-    // If mode is 0, display main
-    if(*(dData->modePtr) == 0)
-    {
-      RIT128x96x4Clear();
-      mainDisp();
-    }
-    // If mode is 1, display menu
-    else if(*(dData->modePtr) == 1)
-    {
-      RIT128x96x4Clear();
-      
-      menuDisp(data);
-    }
-    // If mode is 2, display annunciation menu
-    else if(*(dData->modePtr) == 2)
-    {
+//    // If mode is 0, display main
+//    if(*(dData->modePtr) == 0)
+//    {
+//      RIT128x96x4Clear();
+//      mainDisp();
+//    }
+//    // If mode is 1, display menu
+//    else if(*(dData->modePtr) == 1)
+//    {
+//      RIT128x96x4Clear();
+//      
+//      menuDisp(data);
+//    }
+//    // If mode is 2, display annunciation menu
+//    else if(*(dData->modePtr) == 2)
+//    {
       RIT128x96x4Clear(); 
       annunciateDisp(data);
-    }
-    return;
+    //}
+    vTaskDelay(5000);
+  }
+    //return;
 }
 
 /*
