@@ -266,13 +266,141 @@ TaskHandle_t xComputeHandle;
 
 //*****************************************************************************
 //
+// A set of flags used to track the state of the application.
+//
+//*****************************************************************************
+
+extern unsigned long g_ulFlags;
+#define FLAG_CLOCK_TICK         0           // A timer interrupt has occurred
+#define FLAG_CLOCK_COUNT_LOW    1           // The low bit of the clock count
+#define FLAG_CLOCK_COUNT_HIGH   2           // The high bit of the clock count
+#define FLAG_UPDATE             3           // The display should be updated
+#define FLAG_BUTTON             4           // Debounced state of the button
+#define FLAG_DEBOUNCE_LOW       5           // Low bit of the debounce clock
+#define FLAG_DEBOUNCE_HIGH      6           // High bit of the debounce clock
+#define FLAG_BUTTON_PRESS       7           // The button was just pressed
+#define FLAG_ENET_RXPKT         8           // An Ethernet Packet received
+#define FLAG_ENET_TXPKT         9           // An Ethernet Packet transmitted
+
+//*****************************************************************************
+//
 // The speed of the processor.
 //
 //*****************************************************************************
 
 unsigned long g_ulSystemClock;
 
+//*****************************************************************************
+//
+// The debounced state of the five push buttons.  The bit positions correspond
+// to:
+//
+//     0 - Up
+//     1 - Down
+//     2 - Left
+//     3 - Right
+//     4 - Select
+//
+//*****************************************************************************
+
 unsigned char g_ucSwitches = 0x1f;
+
+//*****************************************************************************
+//
+// The vertical counter used to debounce the push buttons.  The bit positions
+// are the same as g_ucSwitches.
+//
+//*****************************************************************************
+
+static unsigned char g_ucSwitchClockA = 0;
+static unsigned char g_ucSwitchClockB = 0;
+
+//*****************************************************************************
+//
+// The error routine that is called if the driver library encounters an error.
+//
+//*****************************************************************************
+#ifdef DEBUG
+void
+__error__(char *pcFilename, unsigned long ulLine)
+{
+}
+#endif
+
+//*****************************************************************************
+//
+// Handles the SysTick timeout interrupt.
+//
+//*****************************************************************************
+
+void
+SysTickIntHandler(void)
+{
+  unsigned long ulData, ulDelta;
+
+  // Indicate that a timer interrupt has occurred.
+  HWREGBITW(&g_ulFlags, FLAG_CLOCK_TICK) = 1;
+  
+  portDISABLE_INTERRUPTS();
+	{
+		/* Increment the RTOS tick. */
+		if( xTaskIncrementTick() != pdFALSE )
+		{
+			/* A context switch is required.  Context switching is performed in
+			the PendSV interrupt.  Pend the PendSV interrupt. */
+			portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT;
+		}
+	}
+	portENABLE_INTERRUPTS();
+        
+  // only check buttons if there is not a button pressed
+  if(!HWREGBITW(&g_ulFlags, FLAG_BUTTON_PRESS)){
+    // Read the state of the push buttons.
+    ulData = (GPIOPinRead(GPIO_PORTE_BASE, (GPIO_PIN_0 | GPIO_PIN_1 |
+                                            GPIO_PIN_2 | GPIO_PIN_3)) |
+              (GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_1) << 3));
+
+    // Determine the switches that are at a different state than the debounced state.
+    //debug line to imitate up click
+    ulDelta = ulData ^ g_ucSwitches;
+
+    // Increment the clocks by one.
+    // Exclusive or of clock B If a bit is different in A and B then 1 if the bits have the same value = 0
+    g_ucSwitchClockA ^= g_ucSwitchClockB;
+    
+    // Compliment of clock B. This changes 1 to 0 and 0 to 1 bitwise
+    g_ucSwitchClockB = ~g_ucSwitchClockB;
+
+    // Reset the clocks corresponding to switches that have not changed state.
+    g_ucSwitchClockA &= ulDelta;
+    g_ucSwitchClockB &= ulDelta;
+
+    // Get the new debounced switch state.
+    g_ucSwitches &= g_ucSwitchClockA | g_ucSwitchClockB;
+    g_ucSwitches |= (~(g_ucSwitchClockA | g_ucSwitchClockB)) & ulData;
+
+    // Determine the switches that just changed debounced state.
+    ulDelta ^= (g_ucSwitchClockA | g_ucSwitchClockB);
+
+    // See if the select button was  pressed during an alarm.
+    if(g_ucSwitches==15 && auralFlag==1)
+    {
+        // Set a flag to indicate that the select button was just pressed.
+        PWMGenDisable(PWM_BASE, PWM_GEN_0);
+        auralFlag = 0;
+        auralCounter = globalCounter;
+    }
+    // See if any switches just changed debounced state.
+    if(ulDelta && (g_ucSwitches != 0x1F))
+    {
+        // You can watch the variable for ulDelta
+        // Up = 1 Right = 8 down =2 left =4  select = 16 Bit values
+        //printf("A button was pressed %d \n", ulDelta);
+        //printf("SwitchesState %d \n", g_ucSwitches);
+        HWREGBITW(&g_ulFlags, FLAG_BUTTON_PRESS) = 1;
+    }
+  }
+}
 
 //  Declare the globals
 INIT_MEASUREMENT2(m2);
@@ -501,7 +629,7 @@ int main( void )
         xTaskCreate(stat, "Status Task", 1024, (void*)&sPtrs, 3, NULL);
         xTaskCreate(compute, "Compute Task", 1024, (void*)&cPtrs2, 2, &xComputeHandle);
         xTaskCreate(disp, "Display Task", 1024, (void*)&dPtrs2, 1, NULL);
-        //xTaskCreate(keypadfunction, "Keypad Task", 1024, (void*)&kPtrs, 1, NULL);
+        xTaskCreate(keypadfunction, "Keypad Task", 500, (void*)&kPtrs, 2, NULL);
         
 	/* Exclude some tasks if using the kickstart version to ensure we stay within
 	the 32K code size limit. */

@@ -124,7 +124,7 @@ void keypadfunction(void* data)
     if(HWREGBITW(&g_ulFlags, FLAG_BUTTON_PRESS)){
       HWREGBITW(&g_ulFlags, FLAG_BUTTON_PRESS) = 0;  
     }
-    vTaskDelay(5000);
+    vTaskDelay(1000);
   }
   //return;
 }

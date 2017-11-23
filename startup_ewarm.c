@@ -63,6 +63,7 @@ extern void vT3InterruptHandler( void );
 extern void vEMAC_ISR( void );
 extern void Timer0IntHandler( void );
 extern void Timer1IntHandler( void );
+extern void SysTickIntHandler(void);
 
 //*****************************************************************************
 //
@@ -113,7 +114,7 @@ __root const uVectorEntry __vector_table[] @ ".intvec" =
     IntDefaultHandler,                      // Debug monitor handler
     0,                                      // Reserved
     xPortPendSVHandler,                     // The PendSV handler
-    xPortSysTickHandler,                    // The SysTick handler
+    SysTickIntHandler,                    // The SysTick handler // xPortSysTickHandler SysTickIntHandler
     IntDefaultHandler,                      // GPIO Port A
     IntDefaultHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
