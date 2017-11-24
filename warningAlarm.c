@@ -35,7 +35,7 @@ void alarm(void *data)
   
   // Call functions
   checkWarnings(data);
-  //annunciate(data);
+  annunciate(data);
   //auralAnnunciate(data);
   
    // Add serial to queue if warning has occurred
@@ -155,11 +155,12 @@ void auralAnnunciate(void *data)
 {
   warningAlarmData2 * alarm = (warningAlarmData2*) data;
   
+
   // If warning true
   if((*(alarm->tempHighPtr)) || (*(alarm->pulseLowPtr)) || (*(alarm->bpHighPtr)))
   {
     // Enable if 5 seconds have elapsed since last button press
-    if(auralFlag == 0 && (globalCounter - auralCounter >= 50))
+    if(auralFlag == 0 && (globalCounter - auralCounter >= 5000))
     {
       auralFlag = 1;
       PWMGenEnable(PWM_BASE, PWM_GEN_0);
@@ -188,7 +189,8 @@ void annunciate(void *data)
   warningAlarmData2 * alarm = (warningAlarmData2*) data;
   
   // Get data from struct
-  unsigned int* led = (*alarm).ledPtr;
+  //unsigned int* led = (*alarm).ledPtr;
+  static int led = 0;
   unsigned long* previousCount = (*alarm).previousCountPtr;
   const long pulseFlash = *(alarm->pulseFlashPtr);
   const long tempFlash = *(alarm->tempFlashPtr);
@@ -202,15 +204,15 @@ void annunciate(void *data)
     {
       
       (*previousCount) = globalCounter;
-      if((*led) == 1)
+      if((led) == 1)
       {
         disableVisibleAnnunciation();
-        (*led) = 0;
+        (led) = 0;
       }
       else
       {
         enableVisibleAnnunciation();
-        (*led) = 1;
+        (led) = 1;
       }
     }    
   }
@@ -220,15 +222,15 @@ void annunciate(void *data)
     if(globalCounter - (*previousCount) >= tempFlash)
     { 
       (*previousCount) = globalCounter;
-      if((*led) == 1)
+      if((led) == 1)
       {
         disableVisibleAnnunciation();
-        (*led) = 0;
+        (led) = 0;
       }
       else
       {
         enableVisibleAnnunciation();  
-        (*led) = 1;
+        (led) = 1;
       }
     }
   }
@@ -238,15 +240,15 @@ void annunciate(void *data)
     if(globalCounter - (*previousCount) >= bpFlash)
     {
       (*previousCount) = globalCounter;
-      if((*led) == 1)
+      if((led) == 1)
       {
         disableVisibleAnnunciation();
-        (*led) = 0;
+        (led) = 0;
       }
       else
       {
         enableVisibleAnnunciation();
-        (*led) = 1;
+        (led) = 1;
       }
     }
   }

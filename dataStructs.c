@@ -53,7 +53,7 @@ typedef struct
   const long bpFlash;
   unsigned long auralCount;
 }warning;
-#define INIT_WARNING(X) warning X={FALSE,FALSE,FALSE,0,0,20,10,5,0};
+#define INIT_WARNING(X) warning X={FALSE,FALSE,FALSE,0,0,2000,1000,500,0};
 
 // Datastruct for scheduler
 typedef struct{

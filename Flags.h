@@ -9,5 +9,6 @@ extern unsigned int auralCounter;
 extern unsigned long computeFlag;
 extern unsigned long serialFlag;
 extern TaskHandle_t xComputeHandle;
+extern TaskHandle_t xDisplayHandle;
 
 #endif

@@ -36,6 +36,7 @@ void measure(void* data)
 //    }
     
     vTaskResume(xComputeHandle);
+    //vTaskResume(xDisplayHandle);
     
     // Delay for 5 seconds
     vTaskDelay(5000);

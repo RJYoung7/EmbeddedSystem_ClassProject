@@ -40,7 +40,8 @@ void disp(void* data)
       RIT128x96x4Clear(); 
       annunciateDisp(data);
     }
-    vTaskDelay(5000);
+    //vTaskSuspend( NULL );
+    vTaskDelay(1000);
   }
     //return;
 }

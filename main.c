@@ -263,6 +263,7 @@ unsigned long auralFlag;
 unsigned long computeFlag;
 unsigned long serialFlag;
 TaskHandle_t xComputeHandle;
+TaskHandle_t xDisplayHandle;
 
 //*****************************************************************************
 //
@@ -398,8 +399,10 @@ SysTickIntHandler(void)
         //printf("A button was pressed %d \n", ulDelta);
         //printf("SwitchesState %d \n", g_ucSwitches);
         HWREGBITW(&g_ulFlags, FLAG_BUTTON_PRESS) = 1;
+        
     }
   }
+
 }
 
 //  Declare the globals
@@ -624,12 +627,12 @@ int main( void )
 	xOLEDQueue = xQueueCreate( mainOLED_QUEUE_SIZE, sizeof( xOLEDMessage ) );
         
         // Create tasks
-        xTaskCreate(measure, "Measure Task", 500, (void*)&mPtrs2, 4, NULL);
-        xTaskCreate(alarm, "Warning Task", 500, (void*)&wPtrs2, 3, NULL);
+        xTaskCreate(measure, "Measure Task", 500, (void*)&mPtrs2, 3, NULL);
+        xTaskCreate(alarm, "Warning Task", 500, (void*)&wPtrs2, 4, NULL);
         xTaskCreate(stat, "Status Task", 1024, (void*)&sPtrs, 3, NULL);
         xTaskCreate(compute, "Compute Task", 1024, (void*)&cPtrs2, 2, &xComputeHandle);
-        xTaskCreate(disp, "Display Task", 1024, (void*)&dPtrs2, 1, NULL);
-        xTaskCreate(keypadfunction, "Keypad Task", 500, (void*)&kPtrs, 2, NULL);
+        xTaskCreate(disp, "Display Task", 1024, (void*)&dPtrs2, 2, &xDisplayHandle);
+        xTaskCreate(keypadfunction, "Keypad Task", 500, (void*)&kPtrs, 1, NULL);
         
 	/* Exclude some tasks if using the kickstart version to ensure we stay within
 	the 32K code size limit. */
@@ -736,7 +739,7 @@ void prvSetupHardware( void )
 //  // Configure the 32-bit periodic timer.
   TimerConfigure(TIMER0_BASE, TIMER_CFG_32_BIT_PER);
 // TimerConfigure(TIMER1_BASE, TIMER_CFG_32_BIT_PER);
-  TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/100);
+  TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/1000);
 //  TimerLoadSet(TIMER1_BASE, TIMER_A, ulPeriodPR-1);
 //
 //  // Setup the interrupt for the timer timeout.
@@ -826,8 +829,8 @@ void vOLEDTask( void *pvParameters )
 
   /* Initialise the OLED and display a startup message. */
   vOLEDInit( ulSSI_FREQUENCY );
-  vOLEDStringDraw( "POWERED BY FreeRTOS", 0, 0, mainFULL_SCALE );
-  vOLEDImageDraw( pucImage, 0, mainCHARACTER_HEIGHT + 1, bmpBITMAP_WIDTH, bmpBITMAP_HEIGHT );
+  //vOLEDStringDraw( "POWERED BY FreeRTOS", 0, 0, mainFULL_SCALE );
+  //vOLEDImageDraw( pucImage, 0, mainCHARACTER_HEIGHT + 1, bmpBITMAP_WIDTH, bmpBITMAP_HEIGHT );
 
   for( ;; )
   {

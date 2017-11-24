@@ -58,6 +58,7 @@ void keypadfunction(void* data)
         //update the choice back to one
         *selectChoicePtr=1;
         choice = 1;
+        
       }
       
       // if modechoice is hovering on annunciation show cursor in second row
@@ -85,6 +86,7 @@ void keypadfunction(void* data)
         *measurementSelectionPtr = *selectChoicePtr;
         *modePtr = 0;
         choice = 1;
+    
       }
        
       // if modechoice is hovering on annunciation show cursor in second row
@@ -124,6 +126,7 @@ void keypadfunction(void* data)
     if(HWREGBITW(&g_ulFlags, FLAG_BUTTON_PRESS)){
       HWREGBITW(&g_ulFlags, FLAG_BUTTON_PRESS) = 0;  
     }
+    //vTaskResume(xDisplayHandle);
     vTaskDelay(1000);
   }
   //return;
