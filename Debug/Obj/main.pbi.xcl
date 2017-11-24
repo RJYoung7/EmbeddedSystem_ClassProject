@@ -14,6 +14,14 @@ C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\webse
 -I
 C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\..\Common\ethernet\uIP\uip-1.0\uip
 -I
+C:\StellarisWare\inc
+-I
+C:\StellarisWare\boards\ek-lm3s8962\drivers
+-I
+C:\StellarisWare
+-I
+C:\StellarisWare\boards\ek-lm3s8962
+-I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc\c
@@ -29,6 +37,14 @@ C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\source\include
 C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\webserver
 -I
 C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Common\ethernet\uIP\uip-1.0\uip
+-I
+C:\StellarisWare\inc
+-I
+C:\StellarisWare\boards\ek-lm3s8962\drivers
+-I
+C:\StellarisWare
+-I
+C:\StellarisWare\boards\ek-lm3s8962
 -D__CHAR_BITS__=8
 -D__CHAR_MAX__=0xff
 -D__CHAR_MIN__=0

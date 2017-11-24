@@ -1194,10 +1194,40 @@
             <name>$PROJ_DIR$\..\Common\Minimal\blocktim.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\bool.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\bool.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\computeTask.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\computeTask.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\dataPtrs.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\dataPtrs.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\dataStructs.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Common\Minimal\death.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\displayTask.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\displayTask.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Common\Minimal\EventGroupsDemo.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Flags.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Common\Minimal\flash.c</name>
@@ -1215,7 +1245,19 @@
             <name>$PROJ_DIR$\IntQueueTimer.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\keypadTask.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\keypadTask.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\main.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\measureTask.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\measureTask.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\ParTest\ParTest.c</name>
@@ -1236,7 +1278,31 @@
             <name>$PROJ_DIR$\..\Common\Minimal\semtest.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\timertest.c</name>
+            <name>$PROJ_DIR$\serialComTask.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\serialComTask.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\statusTask.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\statusTask.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\systemTimeBase.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\systemTimeBase.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\CORTEX_LM3Sxxxx_IAR_Keil\timertest.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\warningAlarm.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\warningAlarm.h</name>
         </file>
     </group>
     <group>
@@ -1249,6 +1315,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\Common\drivers\LuminaryMicro\IAR\grlib.a</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\StellarisWare\inc\hw_types.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\osram128x64x4.c</name>
