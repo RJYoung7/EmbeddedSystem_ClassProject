@@ -142,6 +142,7 @@ and the TCP/IP stack together cannot be accommodated with the 32K size limit. */
 //#include "driverlib/timer.h"
 //#include "driverlib/systick.h"
 //#include "driverlib/pwm.h"
+#include "adc.h"
 
 /* Demo app includes. */
 //#include "BlockQ.h"
@@ -264,6 +265,7 @@ unsigned long computeFlag;
 unsigned long serialFlag;
 TaskHandle_t xComputeHandle;
 TaskHandle_t xDisplayHandle;
+TaskHandle_t xTempHandle;
 
 //*****************************************************************************
 //
@@ -627,10 +629,10 @@ int main( void )
 	xOLEDQueue = xQueueCreate( mainOLED_QUEUE_SIZE, sizeof( xOLEDMessage ) );
         
         // Create tasks
-        xTaskCreate(measure, "Measure Task", 500, (void*)&mPtrs2, 3, NULL);
+        xTaskCreate(measure, "Measure Task", 2048, (void*)&mPtrs2, 3, NULL);
         xTaskCreate(alarm, "Warning Task", 500, (void*)&wPtrs2, 4, NULL);
-        xTaskCreate(stat, "Status Task", 1024, (void*)&sPtrs, 3, NULL);
-        xTaskCreate(compute, "Compute Task", 1024, (void*)&cPtrs2, 2, &xComputeHandle);
+        xTaskCreate(stat, "Status Task", 100, (void*)&sPtrs, 3, NULL);
+        xTaskCreate(compute, "Compute Task", 100, (void*)&cPtrs2, 2, &xComputeHandle);
         xTaskCreate(disp, "Display Task", 1024, (void*)&dPtrs2, 2, &xDisplayHandle);
         xTaskCreate(keypadfunction, "Keypad Task", 500, (void*)&kPtrs, 1, NULL);
         
@@ -647,12 +649,9 @@ int main( void )
 	}
 	#endif
 
-
-
 	/* Start the tasks defined within this file/specific to this demo. */
 	xTaskCreate( vOLEDTask, "OLED", mainOLED_TASK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
         
-
 	/* Configure the high frequency interrupt used to measure the interrupt
 	jitter time. */
 	//vSetupHighFrequencyTimer();
@@ -671,57 +670,87 @@ void prvSetupHardware( void )
     // Variables used for configurations
   unsigned long ulPeriod;
   unsigned long ulPeriodPR;
-    /* If running on Rev A2 silicon, turn the LDO voltage up to 2.75V.  This is
-    a workaround to allow the PLL to operate reliably. */
-    if( DEVICE_IS_REVA2 )
-    {
-        SysCtlLDOSet( SYSCTL_LDO_2_75V );
-    }
+  /* If running on Rev A2 silicon, turn the LDO voltage up to 2.75V.  This is
+  a workaround to allow the PLL to operate reliably. */
+  if( DEVICE_IS_REVA2 )
+  {
+      SysCtlLDOSet( SYSCTL_LDO_2_75V );
+  }
 
-    /* Set the clocking to run from the PLL at 50 MHz */
-    SysCtlClockSet( SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ );
+  /* Set the clocking to run from the PLL at 50 MHz */
+  SysCtlClockSet( SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ );
 
-    /* 	Enable Port F for Ethernet LEDs
-            LED0        Bit 3   Output
-            LED1        Bit 2   Output 
-    */
+  /* 	Enable Port F for Ethernet LEDs
+          LED0        Bit 3   Output
+          LED1        Bit 2   Output 
+  */
+  
+  g_ulSystemClock = SysCtlClockGet();
+  
+  // Enable the peripherals used by this example.
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER2); 
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOG);
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM);
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+  
+  //GPIODirModeSet( GPIO_PORTF_BASE, (GPIO_PIN_2 | GPIO_PIN_3), GPIO_DIR_MODE_HW );
+  //GPIOPadConfigSet( GPIO_PORTF_BASE, (GPIO_PIN_2 | GPIO_PIN_3 ), GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD );
     
-    g_ulSystemClock = SysCtlClockGet();
-    
-    // Enable the peripherals used by this example.
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER2); 
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOG);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
-    
-    //GPIODirModeSet( GPIO_PORTF_BASE, (GPIO_PIN_2 | GPIO_PIN_3), GPIO_DIR_MODE_HW );
-    //GPIOPadConfigSet( GPIO_PORTF_BASE, (GPIO_PIN_2 | GPIO_PIN_3 ), GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD );
-      
-    // Configure the GPIO used to output the state of the led
-    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_0);
-    
-    //**INITIALIZE BUTTONS**//
-    // Configure the GPIOs used to read the state of the on-board push buttons.
-    GPIOPinTypeGPIOInput(GPIO_PORTE_BASE,
-                         GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
-    GPIOPadConfigSet(GPIO_PORTE_BASE,
-                     GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3,
-                     GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
-    GPIOPinTypeGPIOInput(GPIO_PORTF_BASE, GPIO_PIN_1);
-    GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_STRENGTH_2MA,
-                     GPIO_PIN_TYPE_STD_WPU);
-    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0);
+  // Configure the GPIO used to output the state of the led
+  GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_0);
+  
+  //**INITIALIZE BUTTONS**//
+  // Configure the GPIOs used to read the state of the on-board push buttons.
+  GPIOPinTypeGPIOInput(GPIO_PORTE_BASE,
+                       GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
+  GPIOPadConfigSet(GPIO_PORTE_BASE,
+                   GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3,
+                   GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+  GPIOPinTypeGPIOInput(GPIO_PORTF_BASE, GPIO_PIN_1);
+  GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_STRENGTH_2MA,
+                   GPIO_PIN_TYPE_STD_WPU);
+  GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0);
     
   // Configure SysTick to periodically interrupt.
   SysTickPeriodSet(g_ulSystemClock / CLOCK_RATE);
   SysTickIntEnable();
   SysTickEnable();
+  
+  /* ADC BEGIN*/
+  // The ADC0 peripheral must be enabled for use.
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
+
+  /* Enable sample sequence 3 with a processor signal trigger.  Sequence 3
+   will do a single sample when the processor sends a singal to start the
+   conversion.  Each ADC module has 4 programmable sequences, sequence 0
+   to sequence 3.  This example is arbitrarily using sequence 3. */
+  ADCSequenceConfigure(ADC0_BASE, 3, ADC_TRIGGER_PROCESSOR, 0);
+
+  /* Configure step 0 on sequence 3.  Sample the temperature sensor
+  (ADC_CTL_TS) and configure the interrupt flag (ADC_CTL_IE) to be set
+   when the sample is done.  Tell the ADC logic that this is the last
+   conversion on sequence 3 (ADC_CTL_END).  Sequence 3 has only one
+   programmable step.  Sequence 1 and 2 have 4 steps, and sequence 0 has
+   8 programmable steps.  Since we are only doing a single conversion using
+   sequence 3 we will only configure step 0.  For more information on the
+   ADC sequences and steps, reference the datasheet.*/
+  ADCSequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_TS | ADC_CTL_IE |
+                           ADC_CTL_END);
+
+  // Since sample sequence 3 is now configured, it must be enabled.
+  ADCSequenceEnable(ADC0_BASE, 3);
+
+  /* Clear the interrupt status flag.  This is done to make sure the
+   interrupt flag is cleared before we sample.*/
+  ADCIntClear(ADC0_BASE, 3);
+  
+  /*ADC END*/
   
   //**INITIALIZE UART**//
   // Configure the GPIO for the UART

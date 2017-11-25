@@ -7,36 +7,86 @@
 #include "Flags.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "adc.h"
+#include "inc/hw_memmap.h"
 
 
 void measure(void* data)
 {
   for( ;; )
   {
+    
+//    unsigned long ulADC0_Value[1];
+//
+//    //
+//    // These variables are used to store the temperature conversions for
+//    // Celsius and Fahrenheit.
+//    //
+//    volatile unsigned long ulTemp_ValueC;
+//    volatile unsigned long ulTemp_ValueF;
+//    //
+//    // Sample the temperature sensor forever.  Display the value on the
+//    // console.
+//    //
+//    
+//    
+//
+//        while(1)
+//    {
+//        //
+//        // Trigger the ADC conversion.
+//        //
+//        ADCProcessorTrigger(ADC0_BASE, 3);
+//
+//        //
+//        // Wait for conversion to be completed.
+//        //
+//        while(!ADCIntStatus(ADC0_BASE, 3, false))
+//        {
+//        }
+//
+//        //
+//        // Read ADC Value.
+//        //
+//        ADCSequenceDataGet(ADC0_BASE, 3, ulADC0_Value);
+//
+//        //
+//        // Use non-calibrated conversion provided in the data sheet.  Make
+//        // sure you divide last to avoid dropout.
+//        //
+//        ulTemp_ValueC = (long)(147.5 - ((225 * ulADC0_Value[0]) / 1023));
+//
+//        //
+//        // Get fahrenheit value.  Make sure you divide last to avoid dropout.
+//        //
+//        ulTemp_ValueF = ((ulTemp_ValueC * 9) + 160) / 5;
+//
+//        //
+//        // Display the temperature value on the console.
+//        //
+////        UARTprintf("Temperature = %3d*C or %3d*F\r", ulTemp_ValueC,
+////                   ulTemp_ValueF);
+//
+//        //
+//        // This function provides a means of generating a constant length
+//        // delay.  The function delay (in cycles) = 3 * parameter.  Delay
+//        // 250ms arbitrarily.
+//        //
+//        SysCtlDelay(SysCtlClockGet() / 12);
+//    }
     measureData2 * measureDataPtr = (measureData2*) data;
  
+    //xTaskCreate(measureTempArray, "Measure Temp", 500, (void*)data, 1, &xTempHandle);
     measureTempArray(data);
     measureSysBPArray(data);
     measureDiaBPArray(data);
     measurePRArray(data);
 
-    //Moved this to after the measurements so we start at index 0
-    //increment the count entry
+    /*Moved this to after the measurements so we start at index 0
+    increment the count entry */
     ++(*(*measureDataPtr).countCallsPtr);
     
-//    // If compute task is already in queue don't add
-//    if(computeFlag == 1)
-//    {
-//      computeFlag = 0;
-//    }
-//    // Add compute to queue if new measurement is made
-//    else
-//    {
-//    computeFlag = 1;
-//    }
-    
     vTaskResume(xComputeHandle);
-    //vTaskResume(xDisplayHandle);
     
     // Delay for 5 seconds
     vTaskDelay(5000);
@@ -52,30 +102,39 @@ Do: updates the tempRaw based on algorithm
 */
 void measureTempArray(void* data){
   measureData2* measureDataPtr = (measureData2*) data;
-  //printf("This is a measureTemp Function \n");
-  //Check to see if the temperature is increasing or decreasing
-  int* direction = (*measureDataPtr).tempDirectionPtr;
   
   //Creates a local pointer to the countCalls Variable
   unsigned int* countCalls = (*measureDataPtr).countCallsPtr;
+  
   //Creates a local pointer to the start of the array
   unsigned int* tempRawBuf = (*measureDataPtr).temperatureRawBufPtr;
   
   //find the current index of the array based on call count. 
-  unsigned int index = (*countCalls) %8;
   unsigned int next = (*countCalls +1) %8;
-  //If temperature is above 50 and increasing swap the direction
-  if (50<=tempRawBuf[index] && 1 == *direction){
-    *direction = -1;
+
+  /* This array is used for storing the data read from the ADC FIFO. It
+   must be as large as the FIFO for the sequencer in use.  This example
+   uses sequence 3 which has a FIFO depth of 1.  If another sequence
+   was used with a deeper FIFO, then the array size must be changed. */
+  unsigned long ulADC0_Value[1];
+
+  // Trigger the ADC conversion.
+  ADCProcessorTrigger(ADC0_BASE, 3);
+
+  // Wait for conversion to be completed.
+  while(!ADCIntStatus(ADC0_BASE, 3, false))
+  {
   }
-  //If temperature is below 15 and decreasing swap the direction
-  else if (15>=tempRawBuf[index] && -1 == *direction){  
-    *direction = 1;
-  }
-  // increment or decrement (using the direction value) If even the magnitude is 2 if odd the magnitude is 1
-  //printf("TempRawBefore = %d \n", tempRawBuf[index]);
-  tempRawBuf[next] = tempRawBuf[index] + (*direction) * (((*countCalls + 1) % 2) + 1);
-  //printf("TempRawAfter = %d \n",tempRawBuf[next]);
+
+  /* Clear the interrupt status flag.  This is done to make sure the
+  interrupt flag is cleared before we sample. */
+  ADCIntClear(ADC0_BASE, 3);
+
+  // Read ADC Value.
+  ADCSequenceDataGet(ADC0_BASE, 3, ulADC0_Value);
+
+  // Use non-calibrated conversion provided in the data sheet.
+  tempRawBuf[next] = (int)(147.5 - ((225 * ulADC0_Value[0]) / 1023));
 };
 
 /*
