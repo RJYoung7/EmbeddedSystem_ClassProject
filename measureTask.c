@@ -15,65 +15,6 @@ void measure(void* data)
 {
   for( ;; )
   {
-    
-//    unsigned long ulADC0_Value[1];
-//
-//    //
-//    // These variables are used to store the temperature conversions for
-//    // Celsius and Fahrenheit.
-//    //
-//    volatile unsigned long ulTemp_ValueC;
-//    volatile unsigned long ulTemp_ValueF;
-//    //
-//    // Sample the temperature sensor forever.  Display the value on the
-//    // console.
-//    //
-//    
-//    
-//
-//        while(1)
-//    {
-//        //
-//        // Trigger the ADC conversion.
-//        //
-//        ADCProcessorTrigger(ADC0_BASE, 3);
-//
-//        //
-//        // Wait for conversion to be completed.
-//        //
-//        while(!ADCIntStatus(ADC0_BASE, 3, false))
-//        {
-//        }
-//
-//        //
-//        // Read ADC Value.
-//        //
-//        ADCSequenceDataGet(ADC0_BASE, 3, ulADC0_Value);
-//
-//        //
-//        // Use non-calibrated conversion provided in the data sheet.  Make
-//        // sure you divide last to avoid dropout.
-//        //
-//        ulTemp_ValueC = (long)(147.5 - ((225 * ulADC0_Value[0]) / 1023));
-//
-//        //
-//        // Get fahrenheit value.  Make sure you divide last to avoid dropout.
-//        //
-//        ulTemp_ValueF = ((ulTemp_ValueC * 9) + 160) / 5;
-//
-//        //
-//        // Display the temperature value on the console.
-//        //
-////        UARTprintf("Temperature = %3d*C or %3d*F\r", ulTemp_ValueC,
-////                   ulTemp_ValueF);
-//
-//        //
-//        // This function provides a means of generating a constant length
-//        // delay.  The function delay (in cycles) = 3 * parameter.  Delay
-//        // 250ms arbitrarily.
-//        //
-//        SysCtlDelay(SysCtlClockGet() / 12);
-//    }
     measureData2 * measureDataPtr = (measureData2*) data;
  
     //xTaskCreate(measureTempArray, "Measure Temp", 500, (void*)data, 1, &xTempHandle);
@@ -89,8 +30,7 @@ void measure(void* data)
     vTaskResume(xComputeHandle);
     
     // Delay for 5 seconds
-    vTaskDelay(5000);
-    
+    vTaskDelay(5000);  
   }
 }
 
@@ -155,8 +95,8 @@ void measureSysBPArray(void* data){
     unsigned int sysLast = (*countCalls) %8;
     unsigned int sysNext = (*countCalls +1) %8;
     
-    if (1==*diaComplete && bloodPressRawBuf[sysLast]>100){
-      bloodPressRawBuf[sysNext] = 80;
+    if (1==*diaComplete && bloodPressRawBuf[sysLast]>85){
+      bloodPressRawBuf[sysNext] = 55;
       *diaComplete = 0;
     }
     // If the sysBP <= 100 its not complete so we increment it
@@ -189,10 +129,10 @@ void measureDiaBPArray(void* data){
     unsigned int* diaComplete = (*measureDataPtr).diaCompletePtr;
     unsigned int diaLast = ((*countCalls) %8) + 8;
     unsigned int diaNext = ((*countCalls +1) %8) + 8;
-   // printf("This is a measureSysBp Function \n");
+
   //Check to see if the DiaBp is complete and repeat the original proces
      if (1==*sysComplete && bloodPressRawBuf[diaLast]<40){
-      bloodPressRawBuf[diaNext] = 80;
+      bloodPressRawBuf[diaNext] = 50;
       *sysComplete = 0;
       }
     // If diastolyic BP is above 40 it is not complete

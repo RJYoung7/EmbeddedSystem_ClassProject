@@ -6,8 +6,12 @@
 #include "utils/ustdlib.c"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "Flags.h"
 
 extern unsigned char g_ucSwitches;
+#define LONG_TIME 0xffff
+#define TICKS_TO_WAIT    10
+
 
 /*
 Function disp
@@ -17,9 +21,9 @@ Do: Determines which menu to display
 */
 void disp(void* data)
 {  
+    displayData2 * dData = (displayData2*)data;
   for( ;; )
   {
-    displayData2 * dData = (displayData2*)data;
     
     // If mode is 0, display main
     if(*(dData->modePtr) == 0)
@@ -40,9 +44,10 @@ void disp(void* data)
       RIT128x96x4Clear(); 
       annunciateDisp(data);
     }
-    //vTaskSuspend( NULL );
+   
     vTaskDelay(1000);
   }
+  
     //return;
 }
 
