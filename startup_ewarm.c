@@ -64,6 +64,7 @@ extern void vEMAC_ISR( void );
 extern void Timer0IntHandler( void );
 extern void Timer1IntHandler( void );
 extern void SysTickIntHandler(void);
+extern void GPIOFIntHandler(void);
 
 //*****************************************************************************
 //

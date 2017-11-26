@@ -94,6 +94,7 @@ void vParTestInitialise( void )
     GPIODirModeSet( GPIO_PORTF_BASE, GPIO_PIN_0, GPIO_DIR_MODE_OUT );
     GPIOPadConfigSet( GPIO_PORTF_BASE, GPIO_PIN_0, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD );
     GPIOPinWrite( GPIO_PORTF_BASE, GPIO_PIN_0, 0 );
+   
 }
 /*-----------------------------------------------------------*/
 

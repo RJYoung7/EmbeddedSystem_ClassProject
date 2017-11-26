@@ -261,6 +261,7 @@ unsigned long g_ulFlagPR=0;
 //*****************************************************************************
 unsigned long g_ulFlags;
 unsigned long auralFlag;
+unsigned long ackFlag = 0;
 unsigned long computeFlag;
 unsigned long serialFlag;
 TaskHandle_t xComputeHandle;
@@ -273,7 +274,7 @@ TaskHandle_t xTempHandle;
 //
 //*****************************************************************************
 
-extern unsigned long g_ulFlags;
+//extern unsigned long g_ulFlags;
 #define FLAG_CLOCK_TICK         0           // A timer interrupt has occurred
 #define FLAG_CLOCK_COUNT_LOW    1           // The low bit of the clock count
 #define FLAG_CLOCK_COUNT_HIGH   2           // The high bit of the clock count
@@ -329,83 +330,6 @@ __error__(char *pcFilename, unsigned long ulLine)
 {
 }
 #endif
-
-//*****************************************************************************
-//
-// Handles the SysTick timeout interrupt.
-//
-//*****************************************************************************
-
-void
-SysTickIntHandler(void)
-{
-  unsigned long ulData, ulDelta;
-
-  // Indicate that a timer interrupt has occurred.
-  HWREGBITW(&g_ulFlags, FLAG_CLOCK_TICK) = 1;
-  
-  portDISABLE_INTERRUPTS();
-	{
-		/* Increment the RTOS tick. */
-		if( xTaskIncrementTick() != pdFALSE )
-		{
-			/* A context switch is required.  Context switching is performed in
-			the PendSV interrupt.  Pend the PendSV interrupt. */
-			portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT;
-		}
-	}
-	portENABLE_INTERRUPTS();
-        
-  // only check buttons if there is not a button pressed
-  if(!HWREGBITW(&g_ulFlags, FLAG_BUTTON_PRESS)){
-    // Read the state of the push buttons.
-    ulData = (GPIOPinRead(GPIO_PORTE_BASE, (GPIO_PIN_0 | GPIO_PIN_1 |
-                                            GPIO_PIN_2 | GPIO_PIN_3)) |
-              (GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_1) << 3));
-
-    // Determine the switches that are at a different state than the debounced state.
-    //debug line to imitate up click
-    ulDelta = ulData ^ g_ucSwitches;
-
-    // Increment the clocks by one.
-    // Exclusive or of clock B If a bit is different in A and B then 1 if the bits have the same value = 0
-    g_ucSwitchClockA ^= g_ucSwitchClockB;
-    
-    // Compliment of clock B. This changes 1 to 0 and 0 to 1 bitwise
-    g_ucSwitchClockB = ~g_ucSwitchClockB;
-
-    // Reset the clocks corresponding to switches that have not changed state.
-    g_ucSwitchClockA &= ulDelta;
-    g_ucSwitchClockB &= ulDelta;
-
-    // Get the new debounced switch state.
-    g_ucSwitches &= g_ucSwitchClockA | g_ucSwitchClockB;
-    g_ucSwitches |= (~(g_ucSwitchClockA | g_ucSwitchClockB)) & ulData;
-
-    // Determine the switches that just changed debounced state.
-    ulDelta ^= (g_ucSwitchClockA | g_ucSwitchClockB);
-
-    // See if the select button was  pressed during an alarm.
-    if(g_ucSwitches==15 && auralFlag==1)
-    {
-        // Set a flag to indicate that the select button was just pressed.
-        PWMGenDisable(PWM_BASE, PWM_GEN_0);
-        auralFlag = 0;
-        auralCounter = globalCounter;
-    }
-    // See if any switches just changed debounced state.
-    if(ulDelta && (g_ucSwitches != 0x1F))
-    {
-        // You can watch the variable for ulDelta
-        // Up = 1 Right = 8 down =2 left =4  select = 16 Bit values
-        //printf("A button was pressed %d \n", ulDelta);
-        //printf("SwitchesState %d \n", g_ucSwitches);
-        HWREGBITW(&g_ulFlags, FLAG_BUTTON_PRESS) = 1;
-        
-    }
-  }
-
-}
 
 //  Declare the globals
 INIT_MEASUREMENT2(m2);
@@ -561,6 +485,83 @@ void vTask1(void *vParameters);
 
 //*****************************************************************************
 //
+// Handles the SysTick timeout interrupt.
+//
+//*****************************************************************************
+
+void
+SysTickIntHandler(void)
+{
+  unsigned long ulData, ulDelta;
+
+  // Indicate that a timer interrupt has occurred.
+  HWREGBITW(&g_ulFlags, FLAG_CLOCK_TICK) = 1;
+  
+  portDISABLE_INTERRUPTS();
+	{
+		/* Increment the RTOS tick. */
+		if( xTaskIncrementTick() != pdFALSE )
+		{
+			/* A context switch is required.  Context switching is performed in
+			the PendSV interrupt.  Pend the PendSV interrupt. */
+			portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT;
+		}
+	}
+	portENABLE_INTERRUPTS();
+        
+  // only check buttons if there is not a button pressed
+  if(!HWREGBITW(&g_ulFlags, FLAG_BUTTON_PRESS)){
+    // Read the state of the push buttons.
+    ulData = (GPIOPinRead(GPIO_PORTE_BASE, (GPIO_PIN_0 | GPIO_PIN_1 |
+                                            GPIO_PIN_2 | GPIO_PIN_3)) |
+              (GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_1) << 3));
+
+    // Determine the switches that are at a different state than the debounced state.
+    //debug line to imitate up click
+    ulDelta = ulData ^ g_ucSwitches;
+
+    // Increment the clocks by one.
+    // Exclusive or of clock B If a bit is different in A and B then 1 if the bits have the same value = 0
+    g_ucSwitchClockA ^= g_ucSwitchClockB;
+    
+    // Compliment of clock B. This changes 1 to 0 and 0 to 1 bitwise
+    g_ucSwitchClockB = ~g_ucSwitchClockB;
+
+    // Reset the clocks corresponding to switches that have not changed state.
+    g_ucSwitchClockA &= ulDelta;
+    g_ucSwitchClockB &= ulDelta;
+
+    // Get the new debounced switch state.
+    g_ucSwitches &= g_ucSwitchClockA | g_ucSwitchClockB;
+    g_ucSwitches |= (~(g_ucSwitchClockA | g_ucSwitchClockB)) & ulData;
+
+    // Determine the switches that just changed debounced state.
+    ulDelta ^= (g_ucSwitchClockA | g_ucSwitchClockB);
+
+    // See if the select button was  pressed during an alarm.
+    if(g_ucSwitches==15 && auralFlag==1)
+    {
+        // Set a flag to indicate that the select button was just pressed.
+        PWMGenDisable(PWM_BASE, PWM_GEN_0);
+        auralFlag = 0;
+        auralCounter = globalCounter;
+        ackFlag = 1;
+    }
+    // See if any switches just changed debounced state.
+    if(ulDelta && (g_ucSwitches != 0x1F))
+    {
+        // You can watch the variable for ulDelta
+        // Up = 1 Right = 8 down =2 left =4  select = 16 Bit values
+        //printf("A button was pressed %d \n", ulDelta);
+        //printf("SwitchesState %d \n", g_ucSwitches);
+        HWREGBITW(&g_ulFlags, FLAG_BUTTON_PRESS) = 1;
+        
+    }
+  }
+}
+
+//*****************************************************************************
+//
 // The interrupt handler for the first timer interrupt.
 //
 //*****************************************************************************
@@ -575,6 +576,41 @@ Timer0IntHandler(void)
     increment();
     IntMasterEnable();
 }
+
+
+//void
+//GPIOFIntHandler(void)
+//{
+//    // Clear the timer interrupt.
+//    GPIOPinIntClear(GPIO_PORTF_BASE, GPIO_PIN_1);
+//    
+//    static unsigned char ucLocalTickCount = 0;
+//    BaseType_t xHigherPriorityTaskWoken;
+//
+//    /* Is it time for vATask() to run? */
+//    xHigherPriorityTaskWoken = pdFALSE;
+//    ucLocalTickCount++;
+//
+//        /* Unblock the task by releasing the semaphore. */
+//    if( ucLocalTickCount >= TICKS_TO_WAIT)
+//    {
+//        xSemaphoreGiveFromISR( xSemaphore, &xHigherPriorityTaskWoken );
+//        ucLocalTickCount = 0;
+//    }
+//
+//    /* If xHigherPriorityTaskWoken was set to true you
+//    we should yield.  The actual macro used here is
+//    port specific. */
+//    portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+//
+//
+//    // Update the global counter.
+//    //IntMasterDisable();
+//    //GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_0, 0x01);
+//    
+//    //IntMasterEnable();
+//}
+
 
 //*****************************************************************************
 //
@@ -620,44 +656,43 @@ Timer1IntHandler(void)
  * various Luminary Micro EKs.
  *************************************************************************/
 int main( void )
-{
-        
-	prvSetupHardware();
+{      
+    prvSetupHardware();
 
-	/* Create the queue used by the OLED task.  Messages for display on the OLED
-	are received via this queue. */
-	xOLEDQueue = xQueueCreate( mainOLED_QUEUE_SIZE, sizeof( xOLEDMessage ) );
-        
-        // Create tasks
-        xTaskCreate(measure, "Measure Task", 2048, (void*)&mPtrs2, 3, NULL);
-        xTaskCreate(alarm, "Warning Task", 500, (void*)&wPtrs2, 4, NULL);
-        xTaskCreate(stat, "Status Task", 100, (void*)&sPtrs, 3, NULL);
-        xTaskCreate(compute, "Compute Task", 100, (void*)&cPtrs2, 2, &xComputeHandle);
-        xTaskCreate(disp, "Display Task", 1024, (void*)&dPtrs2, 2, &xDisplayHandle);
-        xTaskCreate(keypadfunction, "Keypad Task", 500, (void*)&kPtrs, 1, NULL);
-        
-	/* Exclude some tasks if using the kickstart version to ensure we stay within
-	the 32K code size limit. */
-	#if mainINCLUDE_WEB_SERVER != 1
-	{
-		/* Create the uIP task if running on a processor that includes a MAC and
-		PHY. */
-		if( SysCtlPeripheralPresent( SYSCTL_PERIPH_ETH ) )
-		{
-			xTaskCreate( vuIP_Task, "uIP", mainBASIC_WEB_STACK_SIZE, NULL, mainCHECK_TASK_PRIORITY - 1, NULL );
-		}
-	}
-	#endif
+    /* Create the queue used by the OLED task.  Messages for display on the OLED
+    are received via this queue. */
+    xOLEDQueue = xQueueCreate( mainOLED_QUEUE_SIZE, sizeof( xOLEDMessage ) );
+    
+    // Create tasks
+    xTaskCreate(measure, "Measure Task", 2048, (void*)&mPtrs2, 3, NULL);
+    xTaskCreate(alarm, "Warning Task", 500, (void*)&wPtrs2, 4, NULL);
+    xTaskCreate(stat, "Status Task", 100, (void*)&sPtrs, 3, NULL);
+    xTaskCreate(compute, "Compute Task", 100, (void*)&cPtrs2, 2, &xComputeHandle);
+    xTaskCreate(disp, "Display Task", 1024, (void*)&dPtrs2, 2, &xDisplayHandle);
+    xTaskCreate(keypadfunction, "Keypad Task", 500, (void*)&kPtrs, 1, NULL);
+    
+    /* Exclude some tasks if using the kickstart version to ensure we stay within
+    the 32K code size limit. */
+    #if mainINCLUDE_WEB_SERVER != 1
+    {
+            /* Create the uIP task if running on a processor that includes a MAC and
+            PHY. */
+            if( SysCtlPeripheralPresent( SYSCTL_PERIPH_ETH ) )
+            {
+                    xTaskCreate( vuIP_Task, "uIP", mainBASIC_WEB_STACK_SIZE, NULL, mainCHECK_TASK_PRIORITY - 1, NULL );
+            }
+    }
+    #endif
 
-	/* Start the tasks defined within this file/specific to this demo. */
-	xTaskCreate( vOLEDTask, "OLED", mainOLED_TASK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
-        
-	/* Configure the high frequency interrupt used to measure the interrupt
-	jitter time. */
-	//vSetupHighFrequencyTimer();
+    /* Start the tasks defined within this file/specific to this demo. */
+    xTaskCreate( vOLEDTask, "OLED", mainOLED_TASK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
+    
+    /* Configure the high frequency interrupt used to measure the interrupt
+    jitter time. */
+    //vSetupHighFrequencyTimer();
 
-	/* Start the scheduler. */
-	vTaskStartScheduler();
+    /* Start the scheduler. */
+    vTaskStartScheduler();
 
     /* Will only get here if there was insufficient memory to create the idle
     task. */
@@ -689,7 +724,7 @@ void prvSetupHardware( void )
   
   // Enable the peripherals used by this example.
   SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
-  SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER2); 
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1); 
   SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
   SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
   SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
@@ -699,24 +734,20 @@ void prvSetupHardware( void )
   SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM);
   SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
   
-  //GPIODirModeSet( GPIO_PORTF_BASE, (GPIO_PIN_2 | GPIO_PIN_3), GPIO_DIR_MODE_HW );
-  //GPIOPadConfigSet( GPIO_PORTF_BASE, (GPIO_PIN_2 | GPIO_PIN_3 ), GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD );
-    
   // Configure the GPIO used to output the state of the led
   GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_0);
-  
+  GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_2);//GPIO_PF2_LED1
+  GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_3);
+
   //**INITIALIZE BUTTONS**//
-  // Configure the GPIOs used to read the state of the on-board push buttons.
-  GPIOPinTypeGPIOInput(GPIO_PORTE_BASE,
-                       GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
-  GPIOPadConfigSet(GPIO_PORTE_BASE,
-                   GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3,
+  //Configure the GPIOs used to read the state of the on-board push buttons.
+  GPIOPinTypeGPIOInput(GPIO_PORTE_BASE, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
+  GPIOPadConfigSet(GPIO_PORTE_BASE, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3,
                    GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
   GPIOPinTypeGPIOInput(GPIO_PORTF_BASE, GPIO_PIN_1);
-  GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_STRENGTH_2MA,
-                   GPIO_PIN_TYPE_STD_WPU);
+  GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
   GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0);
-    
+  
   // Configure SysTick to periodically interrupt.
   SysTickPeriodSet(g_ulSystemClock / CLOCK_RATE);
   SysTickIntEnable();
@@ -760,27 +791,29 @@ void prvSetupHardware( void )
   UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 460800,
                         (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
                          UART_CONFIG_PAR_NONE));
-	
-  ulPeriodPR =(SysCtlClockGet()/4)/2 ;
 
-//          ulPeriodPR =(SysCtlClockGet()/4)/2 ;
-//  //**INITIALIZE TIMER INTERRUPT**//
-//  // Configure the 32-bit periodic timer.
+  
+  
+  //**INITIALIZE TIMER INTERRUPT**//
+  // Configure the 32-bit periodic timer.
   TimerConfigure(TIMER0_BASE, TIMER_CFG_32_BIT_PER);
-// TimerConfigure(TIMER1_BASE, TIMER_CFG_32_BIT_PER);
+  TimerConfigure(TIMER1_BASE, TIMER_CFG_32_BIT_PER);
+  
+  ulPeriodPR =(SysCtlClockGet()/400)/200 ;
+  
   TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/1000);
-//  TimerLoadSet(TIMER1_BASE, TIMER_A, ulPeriodPR-1);
-//
-//  // Setup the interrupt for the timer timeout.
+  TimerLoadSet(TIMER1_BASE, TIMER_A, ulPeriodPR-1);
+
+  // Setup the interrupt for the timer timeout.
   IntEnable(INT_TIMER0A);
-//  IntEnable(INT_TIMER1A);
-//  
+  IntEnable(INT_TIMER1A);
+
   TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
-//  TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
-//  
-//  // Enable the timer.
+  TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
+
+  // Enable the timer.
   TimerEnable(TIMER0_BASE, TIMER_A);
-//  TimerEnable(TIMER1_BASE, TIMER_A);
+  TimerEnable(TIMER1_BASE, TIMER_A);
   
   //**INITIAL SOUND WARNING**//
   // Set GPIO G1 as PWM pin.  They are used to output the PWM1 signal.
@@ -806,7 +839,7 @@ void prvSetupHardware( void )
   // Turn on LED to indicate normal state
   enableVisibleAnnunciation();
 
-	vParTestInitialise();
+  //vParTestInitialise();
 }
 /*-----------------------------------------------------------*/
 
