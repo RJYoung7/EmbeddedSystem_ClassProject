@@ -16,7 +16,7 @@
     float pi = 3.1417;
     float w = 2 * pi * 1000;
     float t =0;
-    for(int i = 1; i<256; i++)
+    for(int i = 0; i<256; i++)
     {
       // store wave value at a given time t in the raw buffer
       EKGRawBuf[i] = (int) (30.0 * sin(w*t));
