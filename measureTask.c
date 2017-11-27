@@ -19,10 +19,24 @@ void measure(void* data)
  
     //xTaskCreate(measureTempArray, "Measure Temp", 500, (void*)data, 1, &xTempHandle);
     measureTempArray(data);
-    measureSysBPArray(data);
-    measureDiaBPArray(data);
+    //measureSysBPArray(data);
+    //measureDiaBPArray(data);
     measurePRArray(data);
-
+    //if sys pressure interupt flagged
+    //cuff pointer in range sys 50 -80
+    if(*(*measureDataPtr).cuffPressRawPtr >=50 || *(*measureDataPtr).cuffPressRawPtr <=80){
+      measureSysBPArray(data);
+      ++(*(*measureDataPtr).sysCompletePtr);
+      //remove flag
+    }
+    
+    //if dia pressure interupt flagged
+    //if cuff raw in range110 -150
+    if(*(*measureDataPtr).cuffPressRawPtr >=110 || *(*measureDataPtr).cuffPressRawPtr <=150){
+      measureDiaBPArray(data);
+      ++(*(*measureDataPtr).diaCompletePtr);
+        //remove flag  
+    }
     /*Moved this to after the measurements so we start at index 0
     increment the count entry */
     ++(*(*measureDataPtr).countCallsPtr);
@@ -87,14 +101,16 @@ void measureSysBPArray(void* data){
     measureData2* measureDataPtr = (measureData2*) data;
     //printf("This is a measureSysBp Function \n");
     //Check to see if the DiaBp is complete and repeat the original proces
-    unsigned int* countCalls = (*measureDataPtr).countCallsPtr;
-    unsigned int* bloodPressRawBuf  = (*measureDataPtr).bloodPressRawBufPtr;
-    unsigned int* sysComplete = (*measureDataPtr).sysCompletePtr;
-    unsigned int* diaComplete = (*measureDataPtr).diaCompletePtr;
-    //find the current index of the array based on call count. 
-    unsigned int sysLast = (*countCalls) %8;
-    unsigned int sysNext = (*countCalls +1) %8;
+    //unsigned int* countCalls = (*measureDataPtr).countCallsPtr;
+    unsigned int* countCalls = (*measureDataPtr).sysCompletePtr;
     
+    unsigned int* bloodPressRawBuf  = (*measureDataPtr).bloodPressRawBufPtr;
+   // unsigned int* sysComplete = (*measureDataPtr).sysCompletePtr;
+    //unsigned int* diaComplete = (*measureDataPtr).diaCompletePtr;
+    //find the current index of the array based on call count. 
+    //unsigned int sysLast = (*countCalls) %8;
+    unsigned int sysNext = (*countCalls +1) %8;
+    /*
     if (1==*diaComplete && bloodPressRawBuf[sysLast]>85){
       bloodPressRawBuf[sysNext] = 55;
       *diaComplete = 0;
@@ -112,6 +128,9 @@ void measureSysBPArray(void* data){
     if (100 < bloodPressRawBuf[sysNext]){
       *sysComplete = 1;
     }
+    */
+   bloodPressRawBuf[sysNext] = *(*measureDataPtr).cuffPressRawPtr;
+
 };
 
 /*
@@ -123,13 +142,15 @@ Do: Places Systolic into array indexes 8-15
 void measureDiaBPArray(void* data){
   
     measureData2* measureDataPtr = (measureData2*) data;
-    unsigned int* countCalls = (*measureDataPtr).countCallsPtr;
-    unsigned int* bloodPressRawBuf = (*measureDataPtr).bloodPressRawBufPtr;
-    unsigned int* sysComplete = (*measureDataPtr).sysCompletePtr;
-    unsigned int* diaComplete = (*measureDataPtr).diaCompletePtr;
-    unsigned int diaLast = ((*countCalls) %8) + 8;
-    unsigned int diaNext = ((*countCalls +1) %8) + 8;
+    //unsigned int* countCalls = (*measureDataPtr).countCallsPtr;
+    //unsigned int* bloodPressRawBuf = (*measureDataPtr).bloodPressRawBufPtr;
+      unsigned int* countCalls = (*measureDataPtr).diaCompletePtr;
 
+  //unsigned int* sysComplete = (*measureDataPtr).sysCompletePtr;
+    //unsigned int* diaComplete = (*measureDataPtr).diaCompletePtr;
+    //unsigned int diaLast = ((*countCalls) %8) + 8;
+    unsigned int diaNext = ((*countCalls +1) %8) + 8;
+/*
   //Check to see if the DiaBp is complete and repeat the original proces
      if (1==*sysComplete && bloodPressRawBuf[diaLast]<40){
       bloodPressRawBuf[diaNext] = 50;
@@ -148,6 +169,9 @@ void measureDiaBPArray(void* data){
     if (40 > bloodPressRawBuf[diaNext]){
       *diaComplete = 1;
     }
+    */
+  bloodPressRawBuf[diaNext] = *(*measureDataPtr).cuffPressRawPtr;
+
 };
 
 
