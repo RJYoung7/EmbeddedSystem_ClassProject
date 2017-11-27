@@ -24,5 +24,7 @@ struct schedulerData;
 
 struct keypadData;
 
+struct EKGData;
+
 struct communicationsData;
 #endif

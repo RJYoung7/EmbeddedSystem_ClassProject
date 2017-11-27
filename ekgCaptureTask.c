@@ -1,0 +1,34 @@
+#include "statusTask.h"
+#include "dataStructs.c"
+#include "dataPtrs.c"
+#include "systemTimeBase.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "math.h"
+
+ void ekgCapture(void *data) {
+  EKGData * EKGDataPtr = (EKGData*) data;
+  signed int* EKGRawBuf = (*EKGDataPtr).EKGRawBufPtr;
+  for( ;; )
+  {
+    //Generate the sine wave
+    float pi = 3.1417;
+    float w = 2 * pi * 1000;
+    float t =0;
+    for(int i = 1; i<256; i++)
+    {
+      // store wave value at a given time t in the raw buffer
+      EKGRawBuf[i] = (int) (30.0 * sin(w*t));
+      // increment t
+      t=t+.000125;
+    }
+      // delay to allow other tasks to run
+      vTaskDelay(5000);
+  }
+  //return;
+
+ }
+	
+
+
+ 

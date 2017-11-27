@@ -410,6 +410,13 @@ keypadData kPtrs=
 
 };
 
+EKGData ecPtrs=
+{
+  &m2.EKGRawBuf,
+  &m2.EKGFreqBuf
+
+};
+
 statusData sPtrs=
 {  
   &s1.batteryState
@@ -436,6 +443,7 @@ void alarm(void* data);
 void disp(void* data);
 void schedule(void* data);
 void keypadfunction(void* data);
+void ekgCapture(void* data);
 void startup();
 
 /*
@@ -670,6 +678,7 @@ int main( void )
     xTaskCreate(compute, "Compute Task", 100, (void*)&cPtrs2, 2, &xComputeHandle);
     xTaskCreate(disp, "Display Task", 1024, (void*)&dPtrs2, 2, &xDisplayHandle);
     xTaskCreate(keypadfunction, "Keypad Task", 500, (void*)&kPtrs, 1, NULL);
+    xTaskCreate(ekgCapture, "EKG Caputer Task", 500, (void*)&ecPtrs, 1, NULL);
     
     /* Exclude some tasks if using the kickstart version to ensure we stay within
     the 32K code size limit. */

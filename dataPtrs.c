@@ -97,7 +97,7 @@ typedef struct
 
 typedef struct
 {
-  unsigned int* EKGRawBufPtr;
-  unsigned int* EKGFreqBufPtr;
+  signed int* EKGRawBufPtr;
+  signed int* EKGFreqBufPtr;
 
 }EKGData;
