@@ -94,3 +94,10 @@ typedef struct
   unsigned short* batteryStatePtr;
   unsigned int* countCallsPtr;
 }communicationsData;
+
+typedef struct
+{
+  unsigned int* EKGRawBufPtr;
+  unsigned int* EKGFreqBufPtr;
+
+}EKGData;

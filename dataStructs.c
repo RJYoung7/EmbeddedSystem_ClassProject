@@ -12,8 +12,10 @@ typedef struct
   unsigned int diaComplete;
   int tempDirection;
   int prDirection;
+  unsigned int EKGRawBuf[256];
+  unsigned int EKGFreqBuf[16];
 } measurement2;
-#define INIT_MEASUREMENT2(X) measurement2 X ={{36,NULL,NULL,NULL,NULL,NULL,NULL,NULL},{55,NULL,NULL,NULL,NULL,NULL,NULL,NULL,50,NULL,NULL,NULL,NULL,NULL,NULL,NULL},{0,NULL,NULL,NULL,NULL,NULL,NULL,NULL},0,0,0,1,1};
+#define INIT_MEASUREMENT2(X) measurement2 X ={{36,NULL,NULL,NULL,NULL,NULL,NULL,NULL},{55,NULL,NULL,NULL,NULL,NULL,NULL,NULL,50,NULL,NULL,NULL,NULL,NULL,NULL,NULL},{0,NULL,NULL,NULL,NULL,NULL,NULL,NULL},0,0,0,1,1,0};
 
 // Project 3 display struct
 typedef struct
