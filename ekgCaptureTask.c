@@ -1,4 +1,4 @@
-#include "statusTask.h"
+#include "ekgCaptureTask.h"
 #include "dataStructs.c"
 #include "dataPtrs.c"
 #include "systemTimeBase.h"
@@ -20,6 +20,9 @@
       // store wave value at a given time t in the raw buffer
       EKGRawBuf[i] = (int) (30.0 * sin(w*t));
       // increment t
+      // May need to change t to fulfill the following req:  equally spaced
+      //samples with inter sample temporal spacing to model a sampling rate at two and a half to
+      //three times the maximum specified frequency.
       t=t+.000125;
     }
       // delay to allow other tasks to run
