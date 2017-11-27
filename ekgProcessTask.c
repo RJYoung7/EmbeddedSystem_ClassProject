@@ -26,9 +26,10 @@ extern int optfft();
     
     //use brents optimized fft formula
     //hard coded a single index for teesting. Will need to add an index staticvariable
-    
-    (*EKGDataPtr).EKGFreqBufPtr[ekgCounter] = optfft(EKGRawBuf,imgBuf);
-    
+    // Brents algorithm returns the index of the Maxima of the sine wave
+    signed int index = optfft(EKGRawBuf,imgBuf);
+    // Using this index we can find the frequency in the input array
+    (*EKGDataPtr).EKGFreqBufPtr[ekgCounter] = EKGRawBuf[index];
     // EKG index increment
     ekgCounter = (ekgCounter + 1 )%8;  
     vTaskSuspend( NULL );
