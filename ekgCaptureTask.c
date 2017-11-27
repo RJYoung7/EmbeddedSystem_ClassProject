@@ -3,6 +3,7 @@
 #include "dataPtrs.c"
 #include "systemTimeBase.h"
 #include "FreeRTOS.h"
+#include "Flags.h"
 #include "task.h"
 #include "math.h"
 
@@ -25,6 +26,8 @@
       //three times the maximum specified frequency.
       t=t+.000125;
     }
+      // signal Process
+      vTaskResume(xEKGHandle);
       // delay to allow other tasks to run
       vTaskDelay(5000);
   }

@@ -252,6 +252,7 @@ unsigned int auralCounter = 0;
 unsigned int pulseFreq=4;
 unsigned int pulseCount=0;
 unsigned long g_ulFlagPR=0;
+unsigned int ekgCounter = 0;
 
 //*****************************************************************************
 //
@@ -265,6 +266,7 @@ unsigned long ackFlag = 0;
 unsigned long computeFlag;
 unsigned long serialFlag;
 TaskHandle_t xComputeHandle;
+TaskHandle_t xEKGHandle;
 TaskHandle_t xDisplayHandle;
 TaskHandle_t xTempHandle;
 
@@ -680,7 +682,7 @@ int main( void )
     xTaskCreate(disp, "Display Task", 500, (void*)&dPtrs2, 2, &xDisplayHandle);
     xTaskCreate(keypadfunction, "Keypad Task", 500, (void*)&kPtrs, 1, NULL);
     xTaskCreate(ekgCapture, "EKG Caputre Task", 500, (void*)&ecPtrs, 1, NULL);
-    xTaskCreate(ekgProcess, "EKG Process Task", 1024, (void*)&ecPtrs, 1, NULL);
+    xTaskCreate(ekgProcess, "EKG Process Task", 1024, (void*)&ecPtrs, 2, &xEKGHandle);
     /* Exclude some tasks if using the kickstart version to ensure we stay within
     the 32K code size limit. */
     #if mainINCLUDE_WEB_SERVER != 1
