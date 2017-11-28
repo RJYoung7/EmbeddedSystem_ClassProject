@@ -22,7 +22,9 @@ void measure(void* data)
     //measureSysBPArray(data);
     //measureDiaBPArray(data);
     measurePRArray(data);
-    //if sys pressure interupt flagged
+    
+    //if sys/dia pressure interupt flagged
+    if(*(*measureDataPtr).cuffPressRawPtr==1){
     //cuff pointer in range sys 50 -80
     if(*(*measureDataPtr).cuffPressRawPtr >=50 || *(*measureDataPtr).cuffPressRawPtr <=80){
       measureSysBPArray(data);
@@ -30,12 +32,14 @@ void measure(void* data)
       //remove flag
     }
     
-    //if dia pressure interupt flagged
+   
     //if cuff raw in range110 -150
     if(*(*measureDataPtr).cuffPressRawPtr >=110 || *(*measureDataPtr).cuffPressRawPtr <=150){
       measureDiaBPArray(data);
       ++(*(*measureDataPtr).diaCompletePtr);
-        //remove flag  
+        
+    }
+        *(*measureDataPtr).cuffPressRawPtr=0;
     }
     /*Moved this to after the measurements so we start at index 0
     increment the count entry */
