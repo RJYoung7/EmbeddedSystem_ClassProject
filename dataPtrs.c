@@ -13,6 +13,7 @@ typedef struct
   int* tempDirectionPtr;
   unsigned long* prPtr;
   unsigned int* cuffPressRawPtr;
+  unsigned int* cuffFlagPtr;
 } measureData2;
 
 // Holds pointers to the variables associated with compute task:
@@ -85,6 +86,7 @@ typedef struct
   unsigned short* selectChoicePtr;
   unsigned short* alarmAcknowledge;
   unsigned int* cuffPressRawPtr;
+  unsigned int* cuffFlagPtr;
 }keypadData;
 
 // Holds pointers to the variables associated with communications task:
