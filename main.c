@@ -351,7 +351,8 @@ measureData2 mPtrs2 =
   &m2.diaComplete,
   &m2.tempDirection,
   &g_ulFlagPR,
-  &m2.cuffPressRaw	
+  &m2.cuffPressRaw,
+  &m2.cuffFlag
 };
 
 computeData2 cPtrs2=
@@ -408,8 +409,8 @@ keypadData kPtrs=
   &k1.scroll,
   &k1.selectChoice,
   &k1.alarmAcknowledge,
-  &m2.cuffPressRaw
-
+  &m2.cuffPressRaw,
+  &m2.cuffFlag
 };
 
 statusData sPtrs=
