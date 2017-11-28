@@ -678,11 +678,11 @@ int main( void )
     xTaskCreate(measure, "Measure Task", 1024, (void*)&mPtrs2, 3, NULL);
     xTaskCreate(alarm, "Warning Task", 500, (void*)&wPtrs2, 4, NULL);
     xTaskCreate(stat, "Status Task", 100, (void*)&sPtrs, 3, NULL);
+    xTaskCreate(ekgCapture, "EKG Caputre Task", 500, (void*)&ecPtrs, 2, NULL);
     xTaskCreate(compute, "Compute Task", 100, (void*)&cPtrs2, 2, &xComputeHandle);
     xTaskCreate(disp, "Display Task", 500, (void*)&dPtrs2, 2, &xDisplayHandle);
     xTaskCreate(keypadfunction, "Keypad Task", 500, (void*)&kPtrs, 1, NULL);
-    xTaskCreate(ekgCapture, "EKG Caputre Task", 500, (void*)&ecPtrs, 1, NULL);
-    xTaskCreate(ekgProcess, "EKG Process Task", 1024, (void*)&ecPtrs, 2, &xEKGHandle);
+    xTaskCreate(ekgProcess, "EKG Process Task", 1024, (void*)&ecPtrs, 1, &xEKGHandle);
     /* Exclude some tasks if using the kickstart version to ensure we stay within
     the 32K code size limit. */
     #if mainINCLUDE_WEB_SERVER != 1
