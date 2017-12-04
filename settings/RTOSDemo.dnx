@@ -38,7 +38,7 @@
         <LMIFTDIfoundProbes />
     </LMIFTDIDriver>
     <DebugChecksum>
-        <Checksum>1904324392</Checksum>
+        <Checksum>2047488437</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -70,7 +70,8 @@
     </DisassembleMode>
     <Breakpoints>
         <Bp0>_ "STD_CODE" "{$PROJ_DIR$\statusTask.c}.15.20" 0 0 0 0 "" 0 ""</Bp0>
-        <Count>1</Count>
+        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\remoteCommunications.c}.108.5" 0 0 0 0 "" 0 ""</Bp1>
+        <Count>2</Count>
     </Breakpoints>
     <LogFile>
         <LoggingEnabled>_ 0</LoggingEnabled>
@@ -82,8 +83,10 @@
         <LogFile>_ ""</LogFile>
     </TermIOLog>
     <Aliases>
-        <A0>_ "C:\Temp\IAR_Relase_DriverLib\ARM\examples\Luminary\Stellaris\src\ssi.c" ""</A0>
-        <Count>1</Count>
+        <A0>_ "C:\Temp\IAR_Relase_DriverLib\ARM\examples\Luminary\Stellaris\src\ethernet.c" ""</A0>
+        <A1>_ "C:\Temp\IAR_Relase_DriverLib\ARM\examples\Luminary\Stellaris\src\interrupt.c" ""</A1>
+        <A2>_ "C:\Temp\IAR_Relase_DriverLib\ARM\examples\Luminary\Stellaris\src\ssi.c" ""</A2>
+        <Count>3</Count>
         <SuppressDialog>0</SuppressDialog>
     </Aliases>
     <CallStackLog>

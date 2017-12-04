@@ -38,6 +38,7 @@
 // Forward declaration of the default fault handlers.
 //
 //*****************************************************************************
+void ResetISR(void);
 static void NmiSR(void);
 static void FaultISR(void);
 static void IntDefaultHandler(void);
@@ -47,7 +48,7 @@ static void IntDefaultHandler(void);
 // External declaration for the interrupt handler used by the application.
 //
 //*****************************************************************************
-
+extern void lwIPEthernetIntHandler(void);
 
 //*****************************************************************************
 //
@@ -75,6 +76,7 @@ extern void GPIOFIntHandler(void);
 #define STACK_SIZE                              120
 #endif
 static unsigned long pulStack[STACK_SIZE] @ ".noinit";
+//static unsigned long pulStack[256] @ ".noinit";
 
 //*****************************************************************************
 //
@@ -158,7 +160,7 @@ __root const uVectorEntry __vector_table[] @ ".intvec" =
     IntDefaultHandler,                      // CAN0
     IntDefaultHandler,                      // CAN1
     IntDefaultHandler,                      // CAN2
-    vEMAC_ISR,                     			// Ethernet
+    lwIPEthernetIntHandler,             			// Ethernet
     IntDefaultHandler,                      // Hibernate
     IntDefaultHandler,                      // USB0
     IntDefaultHandler,                      // PWM Generator 3

@@ -94,3 +94,13 @@ typedef struct
   unsigned short* batteryStatePtr;
   unsigned int* countCallsPtr;
 }communicationsData;
+
+// Holds pointers to the variables associated with communications task:
+typedef struct
+{
+  unsigned char* tempCorrectedBufPtr;
+  unsigned char* bloodPressCorrectedBufPtr;
+  unsigned char* prCorrectedBufPtr;
+  unsigned short* batteryStatePtr;
+  unsigned int* countCallsPtr;
+}remCommData;

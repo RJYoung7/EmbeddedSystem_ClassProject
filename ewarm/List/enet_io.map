@@ -1,0 +1,722 @@
+###############################################################################
+#
+# IAR ELF Linker V8.20.1.14183/W32 for ARM                26/Nov/2017  20:18:10
+# Copyright 2007-2017 IAR Systems AB.
+#
+#    Output file  =  
+#        C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\Exe\enet_io.out
+#    Map file     =  
+#        C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\List\enet_io.map
+#    Command line =  
+#        -f C:\Users\RJYou\AppData\Local\Temp\EW8219.tmp
+#        ("C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\Obj\cgifuncs.o"
+#        "C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\driverlib\ewarm-cm3\Exe\driverlib-cm3.a"
+#        "C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\Obj\enet_io.o"
+#        "C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\Obj\httpd.o"
+#        "C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\Obj\io.o"
+#        "C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\Obj\lmi_fs.o"
+#        "C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\Obj\locator.o"
+#        "C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\Obj\lwiplib.o"
+#        "C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\Obj\rit128x96x4.o"
+#        "C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\Obj\startup.o"
+#        "C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\Obj\ustdlib.o"
+#        --redirect _Printf=_PrintfTiny --redirect _Scanf=_ScanfSmallNoMb -o
+#        "C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\Exe\enet_io.out"
+#        --map "C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\List\enet_io.map"
+#        --config "C:\Users\RJYou\OneDrive\Documents\IAR Embedded
+#        Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\enet_io.icf"
+#        --semihosting --entry __iar_program_start --vfe --text_out locale)
+#
+###############################################################################
+
+*******************************************************************************
+*** RUNTIME MODEL ATTRIBUTES
+***
+
+CppFlavor       = *
+__SystemLibrary = DLib
+__dlib_version  = 6
+
+
+*******************************************************************************
+*** HEAP SELECTION
+***
+
+The basic heap was selected because no calls to memory allocation
+functions were found in the application outside of system library
+functions, and there are calls to deallocation functions in the
+application.
+
+
+*******************************************************************************
+*** PLACEMENT SUMMARY
+***
+
+"A0":  place at start of [from 0x00000000 to 0x0003ffff] { ro section .intvec };
+"P1":  place in [from 0x00000000 to 0x0003ffff] { ro };
+define block HEAP with size = 0M, alignment = 8 { };
+"P2":  place in [from 0x20000000 to 0x2000ffff] { rw, block HEAP };
+do not initialize { section .noinit };
+initialize by copy { rw };
+
+No sections matched the following patterns:
+
+  section VTABLE  in "A1"
+
+
+  Section            Kind        Address     Size  Object
+  -------            ----        -------     ----  ------
+"A0":                                        0xf0
+  .intvec            const    0x00000000     0xf0  startup.o [1]
+                            - 0x000000f0     0xf0
+
+"P1":                                     0x1f961
+  .rodata            const    0x000000f0  0x17ef4  lmi_fs.o [1]
+  .text              ro code  0x00017fe4   0x4ae4  lwiplib.o [1]
+  .text              ro code  0x0001cac8      0x6  ABImemclr4.o [5]
+  .text              ro code  0x0001cace     0x7a  lz77_init_single.o [5]
+  .text              ro code  0x0001cb48     0x76  ABImemcpy_unaligned.o [5]
+  .text              ro code  0x0001cbc0      0x6  ABImemclr.o [5]
+  .text              ro code  0x0001cbc8     0x62  memcmp_unaligned.o [5]
+  .text              ro code  0x0001cc2c     0x88  interrupt.o [4]
+  .text              ro code  0x0001ccb4    0x140  ethernet.o [4]
+  .text              ro code  0x0001cdf4    0x474  sysctl.o [4]
+  .text              ro code  0x0001d268    0x564  enet_io.o [1]
+  .text              ro code  0x0001d7cc     0x32  ABImemset48.o [5]
+  .text              ro code  0x0001d800     0x66  ABImemset.o [5]
+  .text              ro code  0x0001d868     0x10  cpu.o [4]
+  .text              ro code  0x0001d878    0x1b0  cgifuncs.o [1]
+  .text              ro code  0x0001da28    0x174  io.o [1]
+  .text              ro code  0x0001db9c    0x508  rit128x96x4.o [1]
+  .text              ro code  0x0001e0a4    0x308  ustdlib.o [1]
+  .text              ro code  0x0001e3ac     0x36  strlen.o [5]
+  .text              ro code  0x0001e3e4     0x28  systick.o [4]
+  .text              ro code  0x0001e40c     0x40  flash.o [4]
+  .text              ro code  0x0001e44c    0x110  locator.o [1]
+  .text              ro code  0x0001e55c    0x9b8  httpd.o [1]
+  .text              ro code  0x0001ef14     0x42  strcmp_unaligned.o [5]
+  .text              ro code  0x0001ef58    0x120  gpio.o [4]
+  .text              ro code  0x0001f078     0x92  pwm.o [4]
+  .text              ro code  0x0001f10c     0x9e  ssi.o [4]
+  .text              ro code  0x0001f1ac    0x2bc  lmi_fs.o [1]
+  .text              ro code  0x0001f468     0x30  strstr.o [3]
+  .text              ro code  0x0001f498     0x16  strchr.o [5]
+  .text              ro code  0x0001f4ae     0x28  strncmp.o [3]
+  .rodata            const    0x0001f4d8    0x384  httpd.o [1]
+  .rodata            const    0x0001f85c     0x48  enet_io.o [1]
+  .text              ro code  0x0001f8a4     0x40  zero_init3.o [5]
+  .text              ro code  0x0001f8e4     0x28  data_init.o [5]
+  .iar.init_table    const    0x0001f90c     0x20  - Linker created -
+  .text              ro code  0x0001f92c     0x1e  cmain.o [5]
+  .text              ro code  0x0001f94a      0x4  low_level_init.o [3]
+  .text              ro code  0x0001f94e      0x4  exit.o [3]
+  .text              ro code  0x0001f954      0xa  cexit.o [5]
+  .text              ro code  0x0001f960     0x14  exit.o [6]
+  .text              ro code  0x0001f974      0xc  cstartup_M.o [5]
+  .text              ro code  0x0001f980      0xa  startup.o [1]
+  .rodata            const    0x0001f98a      0x0  zero_init3.o [5]
+  .rodata            const    0x0001f98a      0x0  lz77_init_single.o [5]
+  Initializer bytes  const    0x0001f98a     0xc7  <for P2-1>
+                            - 0x0001fa51  0x1f961
+
+"P2", part 1 of 3:                          0x158
+  P2-1                        0x20000000    0x158  <Init block>
+    .data            inited   0x20000000     0x14  enet_io.o [1]
+    .data            inited   0x20000014      0x8  enet_io.o [1]
+    .data            inited   0x2000001c     0x18  httpd.o [1]
+    .data            inited   0x20000034     0xd0  httpd.o [1]
+    .data            inited   0x20000104      0x4  lwiplib.o [1]
+    .data            inited   0x20000108     0x50  lwiplib.o [1]
+                            - 0x20000158    0x158
+
+"P2", part 2 of 3:                         0x4f60
+  .bss               zero     0x20000158   0x3020  lwiplib.o [1]
+  .bss               zero     0x20003178   0x1bf4  lwiplib.o [1]
+  .bss               zero     0x20004d6c     0xec  lwiplib.o [1]
+  .bss               zero     0x20004e58     0xc8  lwiplib.o [1]
+  .bss               zero     0x20004f20     0x7c  lwiplib.o [1]
+  .bss               zero     0x20004f9c     0x60  lwiplib.o [1]
+  .bss               zero     0x20004ffc     0x54  locator.o [1]
+  .bss               zero     0x20005050     0x38  lmi_fs.o [1]
+  .bss               zero     0x20005088      0xc  httpd.o [1]
+  .bss               zero     0x20005094      0x8  io.o [1]
+  .bss               zero     0x2000509c      0x8  rit128x96x4.o [1]
+  .bss               zero     0x200050a4      0x4  enet_io.o [1]
+  .bss               zero     0x200050a8      0x4  lwiplib.o [1]
+  .bss               zero     0x200050ac      0x4  lwiplib.o [1]
+  .bss               zero     0x200050b0      0x4  rit128x96x4.o [1]
+  .bss               zero     0x200050b4      0x2  lwiplib.o [1]
+  .bss               zero     0x200050b6      0x1  lwiplib.o [1]
+  .bss               zero     0x200050b7      0x1  lwiplib.o [1]
+                            - 0x200050b8   0x4f60
+
+"P2", part 3 of 3:                          0x400
+  .noinit            uninit   0x200050b8    0x400  startup.o [1]
+                            - 0x200054b8    0x400
+
+
+*******************************************************************************
+*** INIT TABLE
+***
+
+          Address     Size
+          -------     ----
+Zero (__iar_zero_init3)
+    1 destination range, total size 0x4f60:
+          0x20000158  0x4f60
+
+Copy/lz77 (__iar_lz77_init_single3)
+    1 source range, total size 0xc7 (57% of destination):
+          0x0001f98a    0xc7
+    1 destination range, total size 0x158:
+          0x20000000   0x158
+
+
+
+*******************************************************************************
+*** MODULE SUMMARY
+***
+
+    Module                 ro code  ro data  rw data
+    ------                 -------  -------  -------
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\Obj: [1]
+    cgifuncs.o                 432
+    enet_io.o                1 380       88       32
+    httpd.o                  2 488    1 034      244
+    io.o                       372                 8
+    lmi_fs.o                   700   98 036       56
+    locator.o                  272                84
+    lwiplib.o               19 172       49   20 228
+    rit128x96x4.o            1 288                12
+    startup.o                   10      240    1 024
+    ustdlib.o                  776
+    ------------------------------------------------
+    Total:                  26 890   99 447   21 688
+
+command line: [2]
+    ------------------------------------------------
+    Total:
+
+dl7M_tln.a: [3]
+    exit.o                       4
+    low_level_init.o             4
+    strncmp.o                   40
+    strstr.o                    48
+    ------------------------------------------------
+    Total:                      96
+
+driverlib-cm3.a: [4]
+    cpu.o                       16
+    ethernet.o                 320
+    flash.o                     64
+    gpio.o                     288
+    interrupt.o                136
+    pwm.o                      146
+    ssi.o                      158
+    sysctl.o                 1 140
+    systick.o                   40
+    ------------------------------------------------
+    Total:                   2 308
+
+rt7M_tl.a: [5]
+    ABImemclr.o                  6
+    ABImemclr4.o                 6
+    ABImemcpy_unaligned.o      118
+    ABImemset.o                102
+    ABImemset48.o               50
+    cexit.o                     10
+    cmain.o                     30
+    cstartup_M.o                12
+    data_init.o                 40
+    lz77_init_single.o         122
+    memcmp_unaligned.o          98
+    strchr.o                    22
+    strcmp_unaligned.o          66
+    strlen.o                    54
+    zero_init3.o                64
+    ------------------------------------------------
+    Total:                     800
+
+shb_l.a: [6]
+    exit.o                      20
+    ------------------------------------------------
+    Total:                      20
+
+    Gaps                        22        2
+    Linker created                       32
+----------------------------------------------------
+    Grand Total:            30 136   99 481   21 688
+
+
+*******************************************************************************
+*** ENTRY LIST
+***
+
+Entry                      Address    Size  Type      Object
+-----                      -------    ----  ----      ------
+.iar.init_table$$Base   0x0001f90c           --   Gb  - Linker created -
+.iar.init_table$$Limit  0x0001f92c           --   Gb  - Linker created -
+?main                   0x0001f92d          Code  Gb  cmain.o [5]
+CPUcpsid                0x0001d869     0x8  Code  Gb  cpu.o [4]
+CPUcpsie                0x0001d871     0x8  Code  Gb  cpu.o [4]
+CheckDecimalParam       0x0001d983    0x7c  Code  Gb  cgifuncs.o [1]
+ControlCGIHandler       0x0001d269    0x94  Code  Lc  enet_io.o [1]
+DecodeFormString        0x0001d925    0x5e  Code  Gb  cgifuncs.o [1]
+DecodeHexEscape         0x0001d8ed    0x38  Code  Gb  cgifuncs.o [1]
+DisplayIPAddress        0x0001d3f3    0x36  Code  Gb  enet_io.o [1]
+EthernetConfigSet       0x0001cccd    0x38  Code  Gb  ethernet.o [4]
+EthernetEnable          0x0001cd79    0x28  Code  Gb  ethernet.o [4]
+EthernetInitExpClk      0x0001ccb5    0x12  Code  Gb  ethernet.o [4]
+EthernetIntClear        0x0001cdc5     0x4  Code  Gb  ethernet.o [4]
+EthernetIntDisable      0x0001cdab     0xc  Code  Gb  ethernet.o [4]
+EthernetIntEnable       0x0001cda1     0xa  Code  Gb  ethernet.o [4]
+EthernetIntStatus       0x0001cdb7     0xe  Code  Gb  ethernet.o [4]
+EthernetMACAddrGet      0x0001cd41    0x38  Code  Gb  ethernet.o [4]
+EthernetMACAddrSet      0x0001cd05    0x3c  Code  Gb  ethernet.o [4]
+EthernetPHYRead         0x0001cdc9    0x20  Code  Gb  ethernet.o [4]
+FaultISR                0x0001f987     0x2  Code  Lc  startup.o [1]
+FindCGIParameter        0x0001d879    0x2a  Code  Gb  cgifuncs.o [1]
+FlashUserGet            0x0001e40d    0x24  Code  Gb  flash.o [4]
+GPIODirModeSet          0x0001ef59    0x28  Code  Gb  gpio.o [4]
+GPIOPadConfigSet        0x0001ef81    0x98  Code  Gb  gpio.o [4]
+GPIOPinRead             0x0001f019     0x8  Code  Gb  gpio.o [4]
+GPIOPinTypeGPIOOutput   0x0001f02d     0xa  Code  Gb  gpio.o [4]
+GPIOPinTypePWM          0x0001f049    0x14  Code  Gb  gpio.o [4]
+GPIOPinTypeSSI          0x0001f065    0x14  Code  Gb  gpio.o [4]
+GPIOPinWrite            0x0001f021     0x8  Code  Gb  gpio.o [4]
+GetCGIParam             0x0001d9ff    0x2a  Code  Gb  cgifuncs.o [1]
+HexDigit                0x0001d8c3    0x2a  Code  Gb  cgifuncs.o [1]
+IntDefaultHandler       0x0001f989     0x2  Code  Lc  startup.o [1]
+IntEnable               0x0001cc41    0x58  Code  Gb  interrupt.o [4]
+IntMasterDisable        0x0001cc37     0xa  Code  Gb  interrupt.o [4]
+IntMasterEnable         0x0001cc2d     0xa  Code  Gb  interrupt.o [4]
+IsValidHexDigit         0x0001d8a3    0x20  Code  Gb  cgifuncs.o [1]
+LocatorAppTitleSet      0x0001e51f    0x32  Code  Gb  locator.o [1]
+LocatorInit             0x0001e4c5    0x3e  Code  Gb  locator.o [1]
+LocatorMACAddrSet       0x0001e503    0x1c  Code  Gb  locator.o [1]
+LocatorReceive          0x0001e44d    0x78  Code  Lc  locator.o [1]
+NmiSR                   0x0001f985     0x2  Code  Lc  startup.o [1]
+PWMGenConfigure         0x0001f079    0x30  Code  Gb  pwm.o [4]
+PWMGenEnable            0x0001f0c1     0x6  Code  Gb  pwm.o [4]
+PWMGenPeriodSet         0x0001f0a9    0x18  Code  Gb  pwm.o [4]
+PWMOutputState          0x0001f0f3    0x12  Code  Gb  pwm.o [4]
+PWMPulseWidthSet        0x0001f0c7    0x24  Code  Gb  pwm.o [4]
+RIT128x96x4Clear        0x0001dc39    0x38  Code  Gb  rit128x96x4.o [1]
+RIT128x96x4Clear::pucCommand1
+                        0x0001e09c     0x4  Data  Lc  rit128x96x4.o [1]
+RIT128x96x4Clear::pucCommand2
+                        0x0001e0a0     0x4  Data  Lc  rit128x96x4.o [1]
+RIT128x96x4Disable      0x0001dd7d    0x40  Code  Gb  rit128x96x4.o [1]
+RIT128x96x4Enable       0x0001dd2f    0x40  Code  Gb  rit128x96x4.o [1]
+RIT128x96x4Init         0x0001ddd1    0x60  Code  Gb  rit128x96x4.o [1]
+RIT128x96x4StringDraw   0x0001dc71    0xb6  Code  Gb  rit128x96x4.o [1]
+RITWriteCommand         0x0001db9d    0x30  Code  Lc  rit128x96x4.o [1]
+RITWriteData            0x0001dbd7    0x30  Code  Lc  rit128x96x4.o [1]
+Region$$Table$$Base     0x0001f90c           --   Gb  - Linker created -
+Region$$Table$$Limit    0x0001f92c           --   Gb  - Linker created -
+ResetISR                0x0001f981     0x4  Code  Gb  startup.o [1]
+SSIBusy                 0x0001f19f     0xc  Code  Gb  ssi.o [4]
+SSIConfigSetExpClk      0x0001f10d    0x4e  Code  Gb  ssi.o [4]
+SSIDataGetNonBlocking   0x0001f185    0x1a  Code  Gb  ssi.o [4]
+SSIDataPut              0x0001f173    0x12  Code  Gb  ssi.o [4]
+SSIDisable              0x0001f167     0xc  Code  Gb  ssi.o [4]
+SSIEnable               0x0001f15b     0xc  Code  Gb  ssi.o [4]
+SSIHandler              0x0001d361    0x92  Code  Lc  enet_io.o [1]
+SetTextCGIHandler       0x0001d309    0x58  Code  Lc  enet_io.o [1]
+SysCtlClockGet          0x0001cfe7   0x19a  Code  Gb  sysctl.o [4]
+SysCtlClockSet          0x0001cecd   0x11a  Code  Gb  sysctl.o [4]
+SysCtlDelay             0x0001cec5     0x8  Code  Gb  sysctl.o [4]
+SysCtlPWMClockSet       0x0001d181     0x8  Code  Gb  sysctl.o [4]
+SysCtlPeripheralEnable  0x0001ce79    0x1a  Code  Gb  sysctl.o [4]
+SysCtlPeripheralReset   0x0001cdf5    0x84  Code  Gb  sysctl.o [4]
+SysTickEnable           0x0001e3e5     0xc  Code  Gb  systick.o [4]
+SysTickIntEnable        0x0001e3f1     0xc  Code  Gb  systick.o [4]
+SysTickIntHandler       0x0001d429    0x1c  Code  Gb  enet_io.o [1]
+SysTickPeriodSet        0x0001e3fd     0x8  Code  Gb  systick.o [4]
+__aeabi_memclr          0x0001cbc1          Code  Gb  ABImemclr.o [5]
+__aeabi_memclr4         0x0001cac9          Code  Gb  ABImemclr4.o [5]
+__aeabi_memset          0x0001d801          Code  Gb  ABImemset.o [5]
+__cmain                 0x0001f92d          Code  Gb  cmain.o [5]
+__exit                  0x0001f961    0x14  Code  Gb  exit.o [6]
+__iar_Memset            0x0001d801          Code  Gb  ABImemset.o [5]
+__iar_Memset4_word      0x0001d7cd          Code  Gb  ABImemset48.o [5]
+__iar_Memset8_word      0x0001d7cd          Code  Gb  ABImemset48.o [5]
+__iar_Memset_word       0x0001d809          Code  Gb  ABImemset.o [5]
+__iar_Strchr            0x0001f499          Code  Gb  strchr.o [5]
+__iar_data_init3        0x0001f8e5    0x28  Code  Gb  data_init.o [5]
+__iar_lz77_init_single3
+                        0x0001cacf    0x7a  Code  Gb  lz77_init_single.o [5]
+__iar_program_start     0x0001f975          Code  Gb  cstartup_M.o [5]
+__iar_systems$$module {Abs}
+                        0x00000001          Data  Gb  command line/config [2]
+__iar_unaligned_memcmp  0x0001cbc9          Code  Gb  memcmp_unaligned.o [5]
+__iar_unaligned_memcpy  0x0001cb49          Code  Gb  ABImemcpy_unaligned.o [5]
+__iar_unaligned_memcpy4
+                        0x0001cb69          Code  Gb  ABImemcpy_unaligned.o [5]
+__iar_unaligned_memcpy8
+                        0x0001cb69          Code  Gb  ABImemcpy_unaligned.o [5]
+__iar_unaligned_strcmp  0x0001ef15          Code  Gb  strcmp_unaligned.o [5]
+__iar_zero_init3        0x0001f8a5    0x40  Code  Gb  zero_init3.o [5]
+__low_level_init        0x0001f94b     0x4  Code  Gb  low_level_init.o [3]
+__vector_table          0x00000000    0xf0  Data  Gb  startup.o [1]
+_call_main              0x0001f939          Code  Gb  cmain.o [5]
+_exit                   0x0001f955          Code  Gb  cexit.o [5]
+_main                   0x0001f947          Code  Gb  cmain.o [5]
+ackno                   0x2000014c     0x4  Data  Lc  lwiplib.o [1]
+arp_table               0x20004e58    0xc8  Data  Lc  lwiplib.o [1]
+autoip_arp_announce     0x0001b5cd    0x26  Code  Lc  lwiplib.o [1]
+autoip_arp_reply        0x0001b811    0x9e  Code  Gb  lwiplib.o [1]
+autoip_start            0x0001b5f3    0x94  Code  Gb  lwiplib.o [1]
+autoip_start_probing    0x0001b68d    0x4c  Code  Lc  lwiplib.o [1]
+autoip_stop             0x0001b6d9    0x10  Code  Gb  lwiplib.o [1]
+autoip_tmr              0x0001b6e9   0x122  Code  Gb  lwiplib.o [1]
+close_conn              0x0001e583    0x3e  Code  Lc  httpd.o [1]
+conn_err                0x0001e55d    0x26  Code  Lc  httpd.o [1]
+current_header          0x20004f68     0x4  Data  Gb  lwiplib.o [1]
+current_netif           0x20004f64     0x4  Data  Gb  lwiplib.o [1]
+data_404_htm            0x000000f0   0x14c  Data  Lc  lmi_fs.o [1]
+data_block_htm          0x0000023c   0x804  Data  Lc  lmi_fs.o [1]
+data_family_htm         0x00000a40  0x1170  Data  Lc  lmi_fs.o [1]
+data_favicon_ico        0x00001bb0   0x6c4  Data  Lc  lmi_fs.o [1]
+data_images_awards08_jpg
+                        0x00002274  0x2930  Data  Lc  lmi_fs.o [1]
+data_images_chips_jpg   0x00004ba4  0x17a0  Data  Lc  lmi_fs.o [1]
+data_images_furyblck_gif
+                        0x00006344  0x5b00  Data  Lc  lmi_fs.o [1]
+data_images_no16bit_jpg
+                        0x0000be44  0x1a28  Data  Lc  lmi_fs.o [1]
+data_images_no8bit_jpg  0x0000d86c  0x1a38  Data  Lc  lmi_fs.o [1]
+data_images_noasm_jpg   0x0000f2a4  0x1a70  Data  Lc  lmi_fs.o [1]
+data_images_nopin_jpg   0x00010d14  0x1a14  Data  Lc  lmi_fs.o [1]
+data_images_ti_logo_gif
+                        0x00012728   0xcec  Data  Lc  lmi_fs.o [1]
+data_index_htm          0x00013414   0xd7c  Data  Lc  lmi_fs.o [1]
+data_io_cgi_ssi         0x00014190  0x1238  Data  Lc  lmi_fs.o [1]
+data_io_http_htm        0x000153c8  0x22d8  Data  Lc  lmi_fs.o [1]
+data_perror_htm         0x000176a0   0x854  Data  Lc  lmi_fs.o [1]
+dequeue_packet          0x0001c62b    0x30  Code  Lc  lwiplib.o [1]
+dhcp_arp_reply          0x00018301    0x66  Code  Gb  lwiplib.o [1]
+dhcp_bind               0x0001843d    0xd2  Code  Lc  lwiplib.o [1]
+dhcp_check              0x00017fe5    0x22  Code  Lc  lwiplib.o [1]
+dhcp_coarse_tmr         0x000180b5    0x4a  Code  Gb  lwiplib.o [1]
+dhcp_create_request     0x00018951    0xe2  Code  Lc  lwiplib.o [1]
+dhcp_create_request::xid
+                        0x20000104     0x4  Data  Lc  lwiplib.o [1]
+dhcp_delete_request     0x00018a33    0x1c  Code  Lc  lwiplib.o [1]
+dhcp_discover           0x0001838b    0x90  Code  Lc  lwiplib.o [1]
+dhcp_fine_tmr           0x000180ff    0x2c  Code  Gb  lwiplib.o [1]
+dhcp_free_reply         0x000187c1    0x20  Code  Lc  lwiplib.o [1]
+dhcp_get_option_long    0x00018b03    0x18  Code  Lc  lwiplib.o [1]
+dhcp_get_option_ptr     0x00018a83    0x80  Code  Lc  lwiplib.o [1]
+dhcp_handle_ack         0x000181a9    0xbc  Code  Lc  lwiplib.o [1]
+dhcp_option             0x00018741    0x20  Code  Lc  lwiplib.o [1]
+dhcp_option_byte        0x00018761    0x10  Code  Lc  lwiplib.o [1]
+dhcp_option_long        0x00018779    0x26  Code  Lc  lwiplib.o [1]
+dhcp_option_short       0x00018771     0x8  Code  Lc  lwiplib.o [1]
+dhcp_option_trailer     0x00018a4f    0x34  Code  Lc  lwiplib.o [1]
+dhcp_rebind             0x0001856b    0x38  Code  Lc  lwiplib.o [1]
+dhcp_reboot             0x000185af    0x50  Code  Lc  lwiplib.o [1]
+dhcp_recv               0x000187e1   0x168  Code  Lc  lwiplib.o [1]
+dhcp_release            0x0001866b    0x76  Code  Gb  lwiplib.o [1]
+dhcp_renew              0x0001851b    0x4a  Code  Gb  lwiplib.o [1]
+dhcp_select             0x00018007    0x98  Code  Lc  lwiplib.o [1]
+dhcp_set_state          0x00018733     0xe  Code  Lc  lwiplib.o [1]
+dhcp_start              0x00018265    0x9c  Code  Gb  lwiplib.o [1]
+dhcp_stop               0x000186f1    0x42  Code  Gb  lwiplib.o [1]
+dhcp_timeout            0x0001812b    0x7e  Code  Lc  lwiplib.o [1]
+etharp_arp_input        0x0001c1dd   0x114  Code  Gb  lwiplib.o [1]
+etharp_cached_entry     0x200050b7     0x1  Data  Lc  lwiplib.o [1]
+etharp_ip_input         0x0001c1b5    0x28  Code  Gb  lwiplib.o [1]
+etharp_output           0x0001c2fb    0xaa  Code  Gb  lwiplib.o [1]
+etharp_query            0x0001c3c7   0x110  Code  Gb  lwiplib.o [1]
+etharp_raw              0x0001c4dd    0xb0  Code  Gb  lwiplib.o [1]
+etharp_request          0x0001c599    0x26  Code  Gb  lwiplib.o [1]
+etharp_send_ip          0x0001c0ed    0x24  Code  Lc  lwiplib.o [1]
+etharp_tmr              0x0001bf5d    0x44  Code  Gb  lwiplib.o [1]
+ethbroadcast            0x0001cab8     0x8  Data  Gb  lwiplib.o [1]
+ethernet_input          0x0001c5bf    0x5e  Code  Gb  lwiplib.o [1]
+ethzero                 0x0001cac0     0x8  Data  Gb  lwiplib.o [1]
+exit                    0x0001f94f     0x4  Code  Gb  exit.o [3]
+file_404_htm            0x0001f35c    0x10  Data  Gb  lmi_fs.o [1]
+file_block_htm          0x00017fd4    0x10  Data  Gb  lmi_fs.o [1]
+file_family_htm         0x00017fc4    0x10  Data  Gb  lmi_fs.o [1]
+file_favicon_ico        0x00017fb4    0x10  Data  Gb  lmi_fs.o [1]
+file_images_awards08_jpg
+                        0x00017fa4    0x10  Data  Gb  lmi_fs.o [1]
+file_images_chips_jpg   0x00017f94    0x10  Data  Gb  lmi_fs.o [1]
+file_images_furyblck_gif
+                        0x00017f84    0x10  Data  Gb  lmi_fs.o [1]
+file_images_no16bit_jpg
+                        0x00017f74    0x10  Data  Gb  lmi_fs.o [1]
+file_images_no8bit_jpg  0x00017f64    0x10  Data  Gb  lmi_fs.o [1]
+file_images_noasm_jpg   0x00017f54    0x10  Data  Gb  lmi_fs.o [1]
+file_images_nopin_jpg   0x00017f44    0x10  Data  Gb  lmi_fs.o [1]
+file_images_ti_logo_gif
+                        0x00017f34    0x10  Data  Gb  lmi_fs.o [1]
+file_index_htm          0x00017f24    0x10  Data  Gb  lmi_fs.o [1]
+file_io_cgi_ssi         0x00017f14    0x10  Data  Gb  lmi_fs.o [1]
+file_io_http_htm        0x00017f04    0x10  Data  Gb  lmi_fs.o [1]
+file_perror_htm         0x00017ef4    0x10  Data  Gb  lmi_fs.o [1]
+find_entry              0x0001bfa1   0x13c  Code  Lc  lwiplib.o [1]
+flags                   0x20000108     0x1  Data  Lc  lwiplib.o [1]
+free_etharp_q           0x0001bf3f    0x1e  Code  Lc  lwiplib.o [1]
+fs_close                0x0001f38d     0x4  Code  Gb  lmi_fs.o [1]
+fs_open                 0x0001f1ad   0x1a6  Code  Gb  lmi_fs.o [1]
+fs_open{12}{13}::pcBuf  0x20005060     0x4  Data  Lc  lmi_fs.o [1]
+fs_open{14}{15}::pcBuf  0x20005064     0x4  Data  Lc  lmi_fs.o [1]
+fs_open{16}{17}::pcBuf  0x20005068    0x10  Data  Lc  lmi_fs.o [1]
+fs_open{18}{19}::pcBuf  0x20005078    0x10  Data  Lc  lmi_fs.o [1]
+fs_read                 0x0001f391    0x3e  Code  Gb  lmi_fs.o [1]
+g_cSampleTextBuffer     0x20005050    0x10  Data  Lc  lmi_fs.o [1]
+g_iNumCGIs              0x20000030     0x4  Data  Gb  httpd.o [1]
+g_iNumTags              0x2000508c     0x4  Data  Gb  httpd.o [1]
+g_pCGIs                 0x2000002c     0x4  Data  Gb  httpd.o [1]
+g_pcConfigSSITags       0x20000000    0x14  Data  Lc  enet_io.o [1]
+g_pcSSIExtensions       0x2000001c    0x10  Data  Gb  httpd.o [1]
+g_pcTagLeadOut          0x0001ef10     0x4  Data  Gb  httpd.o [1]
+g_pfnSSIHandler         0x20005088     0x4  Data  Gb  httpd.o [1]
+g_ppcTags               0x20005090     0x4  Data  Gb  httpd.o [1]
+g_psConfigCGIURIs       0x0001d7bc    0x10  Data  Lc  enet_io.o [1]
+g_psDefaultFilenames    0x0001eee8    0x28  Data  Gb  httpd.o [1]
+g_psHTTPHeaderStrings   0x20000034    0x48  Data  Gb  httpd.o [1]
+g_psHTTPHeaders         0x2000007c    0x88  Data  Gb  httpd.o [1]
+g_pucBuffer             0x2000509c     0x8  Data  Lc  rit128x96x4.o [1]
+g_pucFont               0x0001de6c   0x1e0  Data  Lc  rit128x96x4.o [1]
+g_pucLocatorData        0x20004ffc    0x54  Data  Lc  locator.o [1]
+g_pucRIT128x96x4HorizontalInc
+                        0x0001de68     0x2  Data  Lc  rit128x96x4.o [1]
+g_pucRIT128x96x4Init    0x0001e04c    0x50  Data  Lc  rit128x96x4.o [1]
+g_pucRIT128x96x4VerticalInc
+                        0x0001de64     0x2  Data  Lc  rit128x96x4.o [1]
+g_pulEnRegs             0x0001cca0    0x14  Data  Lc  interrupt.o [4]
+g_pulRCGCRegs           0x0001d1f0     0xc  Data  Lc  sysctl.o [4]
+g_pulSRCRRegs           0x0001d1e4     0xc  Data  Lc  sysctl.o [4]
+g_pulXtals              0x0001d1fc    0x6c  Data  Lc  sysctl.o [4]
+g_sNetIF                0x20004f24    0x38  Data  Lc  lwiplib.o [1]
+g_ulARPTimer            0x20004f7c     0x4  Data  Lc  lwiplib.o [1]
+g_ulAutoIPTimer         0x20004f80     0x4  Data  Lc  lwiplib.o [1]
+g_ulDHCPCoarseTimer     0x20004f84     0x4  Data  Lc  lwiplib.o [1]
+g_ulDHCPFineTimer       0x20004f88     0x4  Data  Lc  lwiplib.o [1]
+g_ulDutyCycle           0x20005098     0x4  Data  Gb  io.o [1]
+g_ulFlags               0x200050a4     0x4  Data  Lc  enet_io.o [1]
+g_ulFrequency           0x20005094     0x4  Data  Gb  io.o [1]
+g_ulGWAddr              0x20004f98     0x4  Data  Lc  lwiplib.o [1]
+g_ulHostTimer           0x20004f78     0x4  Data  Lc  lwiplib.o [1]
+g_ulIPAddr              0x20004f90     0x4  Data  Lc  lwiplib.o [1]
+g_ulIPMode              0x20004f8c     0x4  Data  Lc  lwiplib.o [1]
+g_ulLocalTimer          0x20004f6c     0x4  Data  Lc  lwiplib.o [1]
+g_ulMDIXTimer           0x20004f70     0x4  Data  Lc  lwiplib.o [1]
+g_ulNetMask             0x20004f94     0x4  Data  Lc  lwiplib.o [1]
+g_ulSSIFlags            0x200050b0     0x4  Data  Lc  rit128x96x4.o [1]
+g_ulTCPTimer            0x20004f74     0x4  Data  Lc  lwiplib.o [1]
+get_404_file            0x0001eb71    0x22  Code  Lc  httpd.o [1]
+get_http_headers        0x0001e5c9    0xaa  Code  Lc  httpd.o [1]
+htonl                   0x0001baa5    0x1a  Code  Gb  lwiplib.o [1]
+http_accept             0x0001edfb    0x50  Code  Lc  httpd.o [1]
+http_poll               0x0001eb0b    0x42  Code  Lc  httpd.o [1]
+http_recv               0x0001eb93   0x262  Code  Lc  httpd.o [1]
+http_sent               0x0001eb4d    0x24  Code  Lc  httpd.o [1]
+http_set_cgi_handlers   0x0001ee77     0x8  Code  Gb  httpd.o [1]
+http_set_ssi_handler    0x0001ee6d     0xa  Code  Gb  httpd.o [1]
+httpd_init              0x0001ee4b    0x22  Code  Gb  httpd.o [1]
+icmp_dest_unreach       0x0001ba27     0x4  Code  Gb  lwiplib.o [1]
+icmp_input              0x0001b8b9   0x164  Code  Gb  lwiplib.o [1]
+icmp_send_response      0x0001ba2b    0x70  Code  Lc  lwiplib.o [1]
+inet_chksum             0x0001bb8f     0xc  Code  Gb  lwiplib.o [1]
+inet_chksum_pbuf        0x0001bb9b    0x52  Code  Gb  lwiplib.o [1]
+inet_chksum_pseudo      0x0001bb01    0x8e  Code  Gb  lwiplib.o [1]
+inseg                   0x2000010c    0x14  Data  Lc  lwiplib.o [1]
+io_get_ledstate         0x0001db17    0x1e  Code  Gb  io.o [1]
+io_get_pwmdutycycle     0x0001db73     0x6  Code  Gb  io.o [1]
+io_get_pwmfreq          0x0001db6d     0x6  Code  Gb  io.o [1]
+io_get_pwmstate         0x0001db49    0x16  Code  Gb  io.o [1]
+io_init                 0x0001da29    0x8c  Code  Gb  io.o [1]
+io_is_led_on            0x0001db35     0xc  Code  Gb  io.o [1]
+io_is_pwm_on            0x0001db5f     0xe  Code  Gb  io.o [1]
+io_pwm_dutycycle        0x0001dadd     0xe  Code  Gb  io.o [1]
+io_pwm_freq             0x0001dacd    0x10  Code  Gb  io.o [1]
+io_set_led              0x0001dab5     0xe  Code  Gb  io.o [1]
+io_set_pwm              0x0001dac3     0xa  Code  Gb  io.o [1]
+ip_addr_any             0x0001b80c     0x4  Data  Gb  lwiplib.o [1]
+ip_addr_broadcast       0x00018630     0x4  Data  Gb  lwiplib.o [1]
+ip_addr_isbroadcast     0x0001bf09    0x36  Code  Gb  lwiplib.o [1]
+ip_input                0x0001bc41   0x1ce  Code  Gb  lwiplib.o [1]
+ip_output               0x0001bec7    0x2a  Code  Gb  lwiplib.o [1]
+ip_output_if            0x0001be1b    0xac  Code  Gb  lwiplib.o [1]
+ip_output_if::ip_id     0x200050b4     0x2  Data  Lc  lwiplib.o [1]
+ip_route                0x0001bbfb    0x3c  Code  Gb  lwiplib.o [1]
+iphdr                   0x20000144     0x4  Data  Lc  lwiplib.o [1]
+lfree                   0x20000160     0x4  Data  Lc  lwiplib.o [1]
+lwIPEthernetIntHandler  0x0001c999    0xb4  Code  Gb  lwiplib.o [1]
+lwIPHostTimerHandler    0x0001d445    0xcc  Code  Gb  enet_io.o [1]
+lwIPHostTimerHandler::ulLastIPAddress
+                        0x20000014     0x4  Data  Lc  enet_io.o [1]
+lwIPHostTimerHandler{1}{2}::iColumn
+                        0x20000018     0x4  Data  Lc  enet_io.o [1]
+lwIPInit                0x0001c8e7    0x98  Code  Gb  lwiplib.o [1]
+lwIPLocalGWAddrGet      0x0001ca59     0x6  Code  Gb  lwiplib.o [1]
+lwIPLocalIPAddrGet      0x0001ca4d     0x6  Code  Gb  lwiplib.o [1]
+lwIPLocalNetMaskGet     0x0001ca53     0x6  Code  Gb  lwiplib.o [1]
+lwIPTimer               0x0001c97f    0x14  Code  Gb  lwiplib.o [1]
+lwip_standard_chksum    0x0001bac1    0x40  Code  Lc  lwiplib.o [1]
+lwip_stats              0x20004d6c    0xec  Data  Gb  lwiplib.o [1]
+main                    0x0001d51d    0xec  Code  Gb  enet_io.o [1]
+mem_free                0x00018b4f    0x94  Code  Gb  lwiplib.o [1]
+mem_init                0x00018b1b    0x34  Code  Gb  lwiplib.o [1]
+mem_malloc              0x00018cb9    0xf8  Code  Gb  lwiplib.o [1]
+mem_realloc             0x00018be3    0xd0  Code  Gb  lwiplib.o [1]
+memp_free               0x00018e89    0x38  Code  Gb  lwiplib.o [1]
+memp_init               0x00018db1    0x6a  Code  Gb  lwiplib.o [1]
+memp_malloc             0x00018e3d    0x4c  Code  Gb  lwiplib.o [1]
+memp_memory             0x20003198  0x1bd4  Data  Lc  lwiplib.o [1]
+memp_num                0x00018e1c    0x10  Data  Lc  lwiplib.o [1]
+memp_sizes              0x00018e2c    0x10  Data  Lc  lwiplib.o [1]
+memp_tab                0x20003178    0x20  Data  Lc  lwiplib.o [1]
+netif_add               0x00018ec5    0x56  Code  Gb  lwiplib.o [1]
+netif_add::netifnum     0x20004f20     0x1  Data  Lc  lwiplib.o [1]
+netif_default           0x20004f60     0x4  Data  Gb  lwiplib.o [1]
+netif_list              0x20004f5c     0x4  Data  Gb  lwiplib.o [1]
+netif_set_addr          0x00018f1b    0x1e  Code  Gb  lwiplib.o [1]
+netif_set_down          0x00018fc5    0x12  Code  Gb  lwiplib.o [1]
+netif_set_gw            0x00018f95     0x8  Code  Gb  lwiplib.o [1]
+netif_set_ipaddr        0x00018f39    0x5c  Code  Gb  lwiplib.o [1]
+netif_set_netmask       0x00018f9d     0x8  Code  Gb  lwiplib.o [1]
+netif_set_up            0x00018fa9    0x1c  Code  Gb  lwiplib.o [1]
+ntohl                   0x0001babf     0x2  Code  Gb  lwiplib.o [1]
+pbuf_alloc              0x00018fd9    0xf8  Code  Gb  lwiplib.o [1]
+pbuf_cat                0x0001920d    0x26  Code  Gb  lwiplib.o [1]
+pbuf_chain              0x00019233    0x10  Code  Gb  lwiplib.o [1]
+pbuf_clen               0x000191e1    0x12  Code  Gb  lwiplib.o [1]
+pbuf_copy               0x00019243    0x8e  Code  Gb  lwiplib.o [1]
+pbuf_copy_partial       0x000192d1    0x64  Code  Gb  lwiplib.o [1]
+pbuf_free               0x00019193    0x4e  Code  Gb  lwiplib.o [1]
+pbuf_header             0x0001912f    0x64  Code  Gb  lwiplib.o [1]
+pbuf_realloc            0x000190e1    0x4e  Code  Gb  lwiplib.o [1]
+pbuf_ref                0x000191f3    0x1a  Code  Gb  lwiplib.o [1]
+pulStack                0x200050b8   0x400  Data  Lc  startup.o [1]
+ram                     0x20000158     0x4  Data  Lc  lwiplib.o [1]
+ram_end                 0x2000015c     0x4  Data  Lc  lwiplib.o [1]
+ram_heap                0x20000164  0x3014  Data  Lc  lwiplib.o [1]
+raw_input               0x00019335    0x5e  Code  Gb  lwiplib.o [1]
+raw_pcbs                0x200050a8     0x4  Data  Lc  lwiplib.o [1]
+recv_data               0x20000150     0x4  Data  Lc  lwiplib.o [1]
+recv_flags              0x20000109     0x1  Data  Lc  lwiplib.o [1]
+send_data               0x0001e679   0x45c  Code  Lc  httpd.o [1]
+seqno                   0x20000148     0x4  Data  Lc  lwiplib.o [1]
+stellarisif_data        0x20004f9c    0x60  Data  Lc  lwiplib.o [1]
+stellarisif_init        0x0001c7f1    0x8a  Code  Gb  lwiplib.o [1]
+stellarisif_interrupt   0x0001c881    0x66  Code  Gb  lwiplib.o [1]
+stellarisif_output      0x0001c6ed    0x86  Code  Lc  lwiplib.o [1]
+stellarisif_receive     0x0001c779    0x78  Code  Lc  lwiplib.o [1]
+stellarisif_transmit    0x0001c65b    0x7a  Code  Lc  lwiplib.o [1]
+strchr                  0x0001f499          Code  Gb  strchr.o [5]
+strlen                  0x0001e3ad          Code  Gb  strlen.o [5]
+strncmp                 0x0001f4af    0x28  Code  Gb  strncmp.o [3]
+strstr                  0x0001f469    0x30  Code  Gb  strstr.o [3]
+sys_arch_protect        0x0001c61d     0x4  Code  Gb  lwiplib.o [1]
+sys_arch_unprotect      0x0001c621     0xa  Code  Gb  lwiplib.o [1]
+tcp_abandon             0x00019455    0x90  Code  Gb  lwiplib.o [1]
+tcp_accept              0x00019b31     0x4  Code  Gb  lwiplib.o [1]
+tcp_accept_null         0x0001959b     0x6  Code  Lc  lwiplib.o [1]
+tcp_active_pcbs         0x20000130     0x4  Data  Gb  lwiplib.o [1]
+tcp_alloc               0x00019a05   0x106  Code  Gb  lwiplib.o [1]
+tcp_arg                 0x00019b1b     0x4  Code  Gb  lwiplib.o [1]
+tcp_backoff             0x00019924    0x10  Data  Gb  lwiplib.o [1]
+tcp_bind                0x000194f1    0xaa  Code  Gb  lwiplib.o [1]
+tcp_bound_pcbs          0x20000128     0x4  Data  Gb  lwiplib.o [1]
+tcp_close               0x000193b9    0x9c  Code  Gb  lwiplib.o [1]
+tcp_eff_send_mss        0x00019bdd    0x22  Code  Gb  lwiplib.o [1]
+tcp_enqueue             0x0001a9fb   0x326  Code  Gb  lwiplib.o [1]
+tcp_err                 0x00019b2b     0x6  Code  Gb  lwiplib.o [1]
+tcp_fasttmr             0x0001993d    0x4e  Code  Gb  lwiplib.o [1]
+tcp_input               0x00019c09   0x34c  Code  Gb  lwiplib.o [1]
+tcp_input_pcb           0x20000154     0x4  Data  Gb  lwiplib.o [1]
+tcp_keepalive           0x0001b107    0x38  Code  Gb  lwiplib.o [1]
+tcp_listen_input        0x00019f65    0xe2  Code  Lc  lwiplib.o [1]
+tcp_listen_pcbs         0x2000012c     0x4  Data  Gb  lwiplib.o [1]
+tcp_listen_with_backlog
+                        0x000195a1    0x78  Code  Gb  lwiplib.o [1]
+tcp_new                 0x00019b17     0x4  Code  Gb  lwiplib.o [1]
+tcp_new_port            0x00019689    0x4a  Code  Lc  lwiplib.o [1]
+tcp_new_port::port      0x20000120     0x2  Data  Lc  lwiplib.o [1]
+tcp_next_iss::iss       0x2000013c     0x4  Data  Lc  lwiplib.o [1]
+tcp_oos_insert_segment  0x0001a309    0x56  Code  Lc  lwiplib.o [1]
+tcp_output              0x0001ad8f   0x160  Code  Gb  lwiplib.o [1]
+tcp_output_segment      0x0001af07    0xc8  Code  Lc  lwiplib.o [1]
+tcp_output_set_header   0x0001a951    0x66  Code  Lc  lwiplib.o [1]
+tcp_parseopt            0x0001a8df    0x6c  Code  Lc  lwiplib.o [1]
+tcp_pcb_purge           0x00019b3f    0x44  Code  Gb  lwiplib.o [1]
+tcp_pcb_remove          0x00019b83    0x48  Code  Gb  lwiplib.o [1]
+tcp_persist_backoff     0x0001991c     0x8  Data  Gb  lwiplib.o [1]
+tcp_poll                0x00019b35     0xa  Code  Gb  lwiplib.o [1]
+tcp_process             0x0001a051   0x2ae  Code  Lc  lwiplib.o [1]
+tcp_receive             0x0001a375   0x540  Code  Lc  lwiplib.o [1]
+tcp_recv                0x00019b1f     0x6  Code  Gb  lwiplib.o [1]
+tcp_recv_null           0x000199e5    0x20  Code  Gb  lwiplib.o [1]
+tcp_recved              0x0001964d    0x3c  Code  Gb  lwiplib.o [1]
+tcp_rexmit              0x0001b07f    0x3c  Code  Gb  lwiplib.o [1]
+tcp_rexmit_fast         0x0001b0c3    0x44  Code  Gb  lwiplib.o [1]
+tcp_rexmit_rto          0x0001b055    0x2a  Code  Gb  lwiplib.o [1]
+tcp_rst                 0x0001afcf    0x86  Code  Gb  lwiplib.o [1]
+tcp_seg_copy            0x000199c1    0x24  Code  Gb  lwiplib.o [1]
+tcp_seg_free            0x000199a3    0x1e  Code  Gb  lwiplib.o [1]
+tcp_segs_free           0x0001998b    0x18  Code  Gb  lwiplib.o [1]
+tcp_send_ctrl           0x0001a9b7    0x14  Code  Gb  lwiplib.o [1]
+tcp_send_empty_ack      0x0001ad35    0x40  Code  Gb  lwiplib.o [1]
+tcp_sent                0x00019b25     0x6  Code  Gb  lwiplib.o [1]
+tcp_slowtmr             0x000196e1   0x236  Code  Gb  lwiplib.o [1]
+tcp_ticks               0x20000124     0x4  Data  Gb  lwiplib.o [1]
+tcp_timer               0x200050b6     0x1  Data  Lc  lwiplib.o [1]
+tcp_tmp_pcb             0x20000138     0x4  Data  Gb  lwiplib.o [1]
+tcp_tmr                 0x00019399    0x1c  Code  Gb  lwiplib.o [1]
+tcp_tw_pcbs             0x20000134     0x4  Data  Gb  lwiplib.o [1]
+tcp_update_rcv_ann_wnd  0x00019619    0x34  Code  Gb  lwiplib.o [1]
+tcp_write               0x0001a9cb    0x30  Code  Gb  lwiplib.o [1]
+tcp_zero_window_probe   0x0001b175    0x86  Code  Gb  lwiplib.o [1]
+tcphdr                  0x20000140     0x4  Data  Lc  lwiplib.o [1]
+tcplen                  0x20000122     0x2  Data  Lc  lwiplib.o [1]
+udp_bind                0x0001b4e1    0x58  Code  Gb  lwiplib.o [1]
+udp_connect             0x0001b539    0x4a  Code  Gb  lwiplib.o [1]
+udp_input               0x0001b203   0x1a4  Code  Gb  lwiplib.o [1]
+udp_new                 0x0001b5b3    0x1a  Code  Gb  lwiplib.o [1]
+udp_pcbs                0x200050ac     0x4  Data  Gb  lwiplib.o [1]
+udp_recv                0x0001b583     0x6  Code  Gb  lwiplib.o [1]
+udp_remove              0x0001b589    0x2a  Code  Gb  lwiplib.o [1]
+udp_sendto              0x0001b3b9    0x30  Code  Gb  lwiplib.o [1]
+udp_sendto_if           0x0001b3e9    0xe4  Code  Gb  lwiplib.o [1]
+update_arp_entry        0x0001c111    0x94  Code  Lc  lwiplib.o [1]
+usnprintf               0x0001e2e1     0xe  Code  Gb  ustdlib.o [1]
+usprintf                0x0001e2cb    0x16  Code  Gb  ustdlib.o [1]
+ustrncpy                0x0001e0a5    0x20  Code  Gb  ustdlib.o [1]
+ustrtoul                0x0001e2ef    0xa2  Code  Gb  ustdlib.o [1]
+uvsnprintf              0x0001e0c5   0x200  Code  Gb  ustdlib.o [1]
+
+
+[1] = C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\ewarm\Obj
+[2] = command line
+[3] = dl7M_tln.a
+[4] = driverlib-cm3.a
+[5] = rt7M_tl.a
+[6] = shb_l.a
+
+  30 136 bytes of readonly  code memory
+  99 481 bytes of readonly  data memory
+  21 688 bytes of readwrite data memory
+
+Errors: none
+Warnings: none

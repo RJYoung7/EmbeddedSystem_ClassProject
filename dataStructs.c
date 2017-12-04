@@ -71,6 +71,14 @@ typedef struct{
 }keypad;
 #define INIT_KEYPAD(X) keypad X={0,0,0,1,0};
 
+// Datastruct for remote communications data
+typedef struct{
+  unsigned long ulIPAddress;
+  long lStringParam;
+  unsigned char pcDecodedString[24];
+}remotecommunication;
+#define INIT_REMOTECOMMUNICATION(X) remotecommunication X={0,0,NULL};
+
 // Struct for TCB's
 typedef struct MyStruct 
 {
