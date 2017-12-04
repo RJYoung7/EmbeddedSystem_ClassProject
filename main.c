@@ -377,7 +377,8 @@ displayData2 dPtrs2=
   &k1.mode,
   &a1.tempOutOfRange,
   &a1.bpOutOfRange,
-  &a1.pulseOutOfRange
+  &a1.pulseOutOfRange,
+  m2.EKGFreqBuf
   
 };
 

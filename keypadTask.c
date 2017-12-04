@@ -30,7 +30,7 @@ void keypadfunction(void* data)
     keypadData * keypadDataPtr = (keypadData*) data;
     /*
     unsigned short mode; 0 none - 1 Menus or 2 - Annunciate
-    unsigned short measurementSelection; 0 - Blood Pressure 1 - Temperature 2 - Pulse Rate 
+    unsigned short measurementSelection; 0 - Blood Pressure 1 - Temperature 2 - Pulse Rate 3 - EKG Signal
     unsigned short scroll; Only works in menu mode
     unsigned short selectChoice;
     unsigned short alarmAcknowledge;
@@ -72,11 +72,11 @@ void keypadfunction(void* data)
     //Measurement selection (Mode 1 for menu)
     if(*modePtr == 1 && choice != 1){
 
-      //down is pressed and the cursor is not on annunciate
-      if(g_ucSwitches==29 && *selectChoicePtr!=3){
+      //down is pressed and the cursor is not on EKGSignal
+      if(g_ucSwitches==29 && *selectChoicePtr!=4){
         (*selectChoicePtr) += 1;
       }
-      //else up is pressed and cursor is not on menu
+      //else up is pressed and cursor is not on Blood Pressure
       else if(g_ucSwitches==30 && *selectChoicePtr!=1){
         (*selectChoicePtr) -= 1;
       }
@@ -100,6 +100,9 @@ void keypadfunction(void* data)
           break;
         case(3):
           row = 30;
+          break;
+        case(4):
+          row = 40;
           break;
       }
     }

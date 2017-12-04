@@ -64,6 +64,7 @@ void annunciateDisp(void* data)
   //find the current index of the array based on call count. 
   unsigned int index = ((*(dData->countCallsPtr)) % 8);
   unsigned int diaIndex = index + 8;
+  //There is a global ekg counter ekgCounter
   
   //find the latest value of temperature
   unsigned char tempCorrect =(dData->tempCorrectedBufPtr[index]);
@@ -93,6 +94,13 @@ void annunciateDisp(void* data)
   
   char batt[20];
   sprintf(batt,"Batt %d ",battery);
+  
+  //find the latest ekg signal, the counter has the next index to be filled.
+  // Must subtract 1 to get previous value. 
+  signed int previous = (ekgCounter - 1) % 16;
+  unsigned char ekgFreq = (unsigned char)((dData->EKGFreqBufPtr[previous]));
+  char ekg[20];
+  usprintf(ekg,"EKG Signal %d Hz",ekgFreq);
   
   // Check for Warnings
   // Temp Warning
@@ -131,10 +139,11 @@ void annunciateDisp(void* data)
   RIT128x96x4StringDraw(temp,5,9,15);
   RIT128x96x4StringDraw(bP,5,20,15);
   RIT128x96x4StringDraw(pulse,5,30,15);
+  RIT128x96x4StringDraw(ekg,5,40,15);
   RIT128x96x4StringDraw(batt,80,9,15);
-  RIT128x96x4StringDraw(tempOut,5,40,15);
-  RIT128x96x4StringDraw(bpOut,5,50,15);
-  RIT128x96x4StringDraw(pulseOut,5,60,15);
+  RIT128x96x4StringDraw(tempOut,5,50,15);
+  RIT128x96x4StringDraw(bpOut,5,60,15);
+  RIT128x96x4StringDraw(pulseOut,5,70,15);
  
   return; 
 }
@@ -175,8 +184,12 @@ void menuDisp()
   char pulse[20];
   usprintf(pulse,"Pulse Rate");
   
+  char ekg[20];
+  usprintf(ekg,"EKG Signals");
+  
  // Update OLED screen to show new values
   RIT128x96x4StringDraw(bp,10,9,15);
   RIT128x96x4StringDraw(temp,10,20,15);
   RIT128x96x4StringDraw(pulse,10,30,15);
+  RIT128x96x4StringDraw(ekg,10,40,15);
 }

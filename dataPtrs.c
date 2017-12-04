@@ -39,6 +39,7 @@ typedef struct
   unsigned char* tempOutOfRangePtr;
   unsigned char* bpOutOfRangePtr;
   unsigned char* pulseOutOfRangePtr;
+  unsigned char* EKGFreqBufPtr;
 }displayData2;
 
 // Holds pointers to the variables associated with warning/alarm task:

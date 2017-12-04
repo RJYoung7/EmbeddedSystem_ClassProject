@@ -31,7 +31,7 @@ extern int optfft();
     // Using this index we can find the frequency in the input array
     (*EKGDataPtr).EKGFreqBufPtr[ekgCounter] = EKGRawBuf[index];
     // EKG index increment
-    ekgCounter = (ekgCounter + 1 )%8;  
+    ekgCounter = (ekgCounter + 1 )%16;  
     vTaskSuspend( NULL );
     //vTaskDelay(5000);
   }
