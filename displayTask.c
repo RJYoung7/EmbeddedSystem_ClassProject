@@ -99,7 +99,7 @@ void annunciateDisp(void* data)
   // Must subtract 1 to get previous value. 
   signed int previous = (ekgCounter - 1) % 16;
   unsigned char ekgFreq = (unsigned char)((dData->EKGFreqBufPtr[previous]));
-  char ekg[20];
+  char ekg[20] = "";
   usprintf(ekg,"EKG Signal %d Hz",ekgFreq);
   
   // Check for Warnings

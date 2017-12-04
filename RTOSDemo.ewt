@@ -1224,6 +1224,18 @@
             <name>$PROJ_DIR$\displayTask.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\ekgCaptureTask.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\ekgCaptureTask.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\ekgProcessTask.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\ekgProcessTask.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Common\Minimal\EventGroupsDemo.c</name>
         </file>
         <file>
@@ -1317,7 +1329,13 @@
             <name>$PROJ_DIR$\..\Common\drivers\LuminaryMicro\IAR\grlib.a</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\StellarisWare\inc\hw_types.h</name>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\..\StellarisWare\inc\hw_types.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\optfft.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\optfft.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\osram128x64x4.c</name>
