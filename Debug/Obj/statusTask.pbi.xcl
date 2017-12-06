@@ -1,18 +1,18 @@
-"C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\statusTask.c"
+"C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\statusTask.c"
 -std=c11
 -ferror-limit=0
 -I
-C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project
 -I
-C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\..\Common\drivers\LuminaryMicro
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\..\Common\drivers\LuminaryMicro
 -I
-C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\..\common\include
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\..\common\include
 -I
-C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\..\..\source\include
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\..\..\source\include
 -I
-C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\webserver
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\webserver
 -I
-C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\..\Common\ethernet\uIP\uip-1.0\uip
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\..\Common\ethernet\uIP\uip-1.0\uip
 -I
 C:\StellarisWare\inc
 -I
@@ -21,22 +21,34 @@ C:\StellarisWare\boards\ek-lm3s8962\drivers
 C:\StellarisWare
 -I
 C:\StellarisWare\boards\ek-lm3s8962
+-I
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\src\include
+-I
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io
+-I
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\src\include
+-I
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\src\include\ipv4
+-I
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\apps
+-I
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\ports\stellaris\include
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc\c
 -I
-C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project
 -I
-C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Common\drivers\LuminaryMicro
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Common\drivers\LuminaryMicro
 -I
-C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\common\include
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\common\include
 -I
-C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\source\include
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\source\include
 -I
-C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\webserver
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\webserver
 -I
-C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Common\ethernet\uIP\uip-1.0\uip
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Common\ethernet\uIP\uip-1.0\uip
 -I
 C:\StellarisWare\inc
 -I
@@ -45,6 +57,18 @@ C:\StellarisWare\boards\ek-lm3s8962\drivers
 C:\StellarisWare
 -I
 C:\StellarisWare\boards\ek-lm3s8962
+-I
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\src\include
+-I
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io
+-I
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\src\include
+-I
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\src\include\ipv4
+-I
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\apps
+-I
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\ports\stellaris\include
 -D__CHAR_BITS__=8
 -D__CHAR_MAX__=0xff
 -D__CHAR_MIN__=0
