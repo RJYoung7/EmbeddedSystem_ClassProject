@@ -198,6 +198,7 @@ and the TCP/IP stack together cannot be accommodated with the 32K size limit. */
 #include "driverlib/flash.h"
 #include "inc/hw_nvic.h"
 #include "lwip/opt.h"
+#include "semphr.h"
 
 #include <time.h>
 
@@ -267,6 +268,9 @@ unsigned long serialFlag;
 TaskHandle_t xComputeHandle;
 TaskHandle_t xDisplayHandle;
 TaskHandle_t xTempHandle;
+TaskHandle_t xCommandHandle;
+SemaphoreHandle_t xSemaphore = NULL;
+
 
 //*****************************************************************************
 //
@@ -340,6 +344,7 @@ INIT_WARNING(w1);
 INIT_SCHEDULER(c1);
 INIT_KEYPAD(k1);
 INIT_REMOTECOMMUNICATION(r1);
+INIT_COMMAND(co);
 
 //Connect pointer structs to data
 measureData2 mPtrs2 = 
@@ -429,6 +434,11 @@ remCommData rPtrs={
   &m2.countCalls
 };
 
+commandData coPtrs={
+    &co.lStringParam,
+    co.commandBuf
+};
+
 //Declare the prototypes for the tasks
 void compute(void* data);
 void measure(void* data);
@@ -438,6 +448,7 @@ void disp(void* data);
 void schedule(void* data);
 void keypadfunction(void* data);
 void remoteCommunications(void* data);
+void commandFunction(void* data);
 void startup();
 
 /*
@@ -504,10 +515,10 @@ extern void httpd_init(void);
 //
 //*****************************************************************************
 #define SSI_INDEX_TEMPSTATE  0
-#define SSI_INDEX_PWMSTATE  1
-#define SSI_INDEX_PWMFREQ   2
-#define SSI_INDEX_PWMDUTY   3
-#define SSI_INDEX_FORMVARS  4
+#define SSI_INDEX_SYSSTATE  1
+#define SSI_INDEX_DIASTATE   2
+#define SSI_INDEX_PULSESTATE   3
+#define SSI_INDEX_BATTERYSTATE  4
 
 //*****************************************************************************
 //
@@ -521,10 +532,10 @@ extern void httpd_init(void);
 static const char *g_pcConfigSSITags[] =
 {
     "TEMPtxt",        // SSI_INDEX_LEDSTATE
-    "PWMtxt",        // SSI_INDEX_PWMSTATE
-    "PWMfreq",       // SSI_INDEX_PWMFREQ
-    "PWMduty",       // SSI_INDEX_PWMDUTY
-    "FormVars"       // SSI_INDEX_FORMVARS
+    "SYStxt",        // SSI_INDEX_PWMSTATE
+    "DIAtxt",       // SSI_INDEX_PWMFREQ
+    "PULSEtxt",       // SSI_INDEX_PWMDUTY
+    "BATtxt"       // SSI_INDEX_FORMVARS
 };
 
 //*****************************************************************************
@@ -540,8 +551,6 @@ static const char *g_pcConfigSSITags[] =
 //! Prototypes for the various CGI handler functions.
 //
 //*****************************************************************************
-static char *ControlCGIHandler(int iIndex, int iNumParams, char *pcParam[],
-                              char *pcValue[]);
 static char *SetTextCGIHandler(int iIndex, int iNumParams, char *pcParam[],
                               char *pcValue[]);
 
@@ -560,6 +569,7 @@ static int SSIHandler(int iIndex, char *pcInsert, int iInsertLen);
 //*****************************************************************************
 #define CGI_INDEX_CONTROL       0
 #define CGI_INDEX_TEXT          1
+#define CGI_INDEX_DATA          2
 
 //*****************************************************************************
 //
@@ -571,8 +581,7 @@ static int SSIHandler(int iIndex, char *pcInsert, int iInsertLen);
 //*****************************************************************************
 static const tCGI g_psConfigCGIURIs[] =
 {
-    { "/iocontrol.cgi", ControlCGIHandler },      // CGI_INDEX_CONTROL
-    { "/settxt.cgi", SetTextCGIHandler }          // CGI_INDEX_TEXT
+    { "/settxt.cgi", SetTextCGIHandler }          // CGI_INDEX_TEXT       
 };
 
 //*****************************************************************************
@@ -589,7 +598,7 @@ static const tCGI g_psConfigCGIURIs[] =
 //! to load in response to it being called.
 //
 //*****************************************************************************
-#define DEFAULT_CGI_RESPONSE    "/io_cgi.ssi"
+#define DEFAULT_CGI_RESPONSE    "/patient_data.ssi"
 
 //*****************************************************************************
 //
@@ -627,55 +636,6 @@ __error__(char *pcFilename, unsigned long ulLine)
 }
 #endif
 
-//*****************************************************************************
-//
-// This CGI handler is called whenever the web browser requests iocontrol.cgi.
-//
-//*****************************************************************************
-static char *
-ControlCGIHandler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
-{
-//    tBoolean bParamError;
-//    long lLEDState, lPWMState, lPWMDutyCycle, lPWMFrequency;
-//
-//    //
-//    // We have not encountered any parameter errors yet.
-//    //
-//    bParamError = false;
-//
-//    //
-//    // Get each of the 4 expected parameters.
-//    //
-//    lLEDState = FindCGIParameter("LEDOn", pcParam, iNumParams);
-//    lPWMState = FindCGIParameter("PWMOn", pcParam, iNumParams);
-//    lPWMDutyCycle = GetCGIParam("PWMDutyCycle", pcParam, pcValue, iNumParams,
-//                                &bParamError);
-//    lPWMFrequency = GetCGIParam("PWMFrequency", pcParam, pcValue, iNumParams,
-//                                &bParamError);
-//
-//    //
-//    // Was there any error reported by the parameter parser?
-//    //
-//    if(bParamError || (lPWMDutyCycle < 0) || (lPWMDutyCycle > 100) ||
-//       (lPWMFrequency < 200) || (lPWMFrequency > 20000))
-//    {
-//        return(PARAM_ERROR_RESPONSE);
-//    }
-//
-//    //
-//    // We got all the parameters and the values were within the expected ranges
-//    // so go ahead and make the changes.
-//    //
-//    io_set_led((lLEDState == -1) ? false : true);
-//    io_pwm_dutycycle((unsigned long)lPWMDutyCycle);
-//    io_pwm_freq((unsigned long)lPWMFrequency);
-//    io_set_pwm((lPWMState == -1) ? false : true);
-
-    //
-    // Send back the default response page.
-    //
-    return(DEFAULT_CGI_RESPONSE);
-}
 
 //*****************************************************************************
 //
@@ -686,46 +646,46 @@ static char *
 SetTextCGIHandler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
 {
     long lStringParam;
-    char pcDecodedString[24];
+    int len;
+    BaseType_t xHigherPriorityTaskWoken;
 
-    //
+    xHigherPriorityTaskWoken = pdFALSE;
+
     // Find the parameter that has the string we need to display.
-    //
     lStringParam = FindCGIParameter("DispText", pcParam, iNumParams);
 
-    //
     // If the parameter was not found, show the error page.
-    //
     if(lStringParam == -1)
     {
         return(PARAM_ERROR_RESPONSE);
     }
 
-    //
     // The parameter is present. We need to decode the text for display.
-    //
-    DecodeFormString(pcValue[lStringParam], pcDecodedString, 24);
+    DecodeFormString(pcValue[lStringParam], co.commandBuf, 24);//co.commandBuf
 
-    //
-    // Claim the SSI for communication with the display.
-    //
-    //RIT128x96x4Enable(1000000);
+    // Get the length of the string
+    len = strlen(co.commandBuf);
+    
+    if(len == 1)
+    {
+      //if(xSemaphore != NULL)
+      //{
+      //vTaskResume(xCommandHandle);
+      //xTaskCreate(commandFunction, "Command Task", 200, (void*)&coPtrs, 1, &xCommandHandle);
+      //xSemaphoreGive( xSemaphore, &xHigherPriorityTaskWoken );
+      //portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+      //}
+
+    }
 
     //
     // Erase the previous string and overwrite it with the new one.
     //
-    RIT128x96x4StringDraw("                      ", 0, 64, 12);
-    RIT128x96x4StringDraw(pcDecodedString, 0, 64, 12);
+    //RIT128x96x4StringDraw("                      ", 0, 64, 12);
+    //RIT128x96x4StringDraw(co.commandBuf, 0, 64, 12);
 
-    //
-    // Release the SSI.
-    //
-    //RIT128x96x4Disable();
-
-    //
     // Tell the HTTPD server which file to send back to the client.
-    //
-    return(DEFAULT_CGI_RESPONSE);
+    return("/send_command.ssi");
 }
 
 //*****************************************************************************
@@ -739,50 +699,39 @@ SetTextCGIHandler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
 static int
 SSIHandler(int iIndex, char *pcInsert, int iInsertLen)
 {
-    unsigned long ulVal;
-
-    //
     // Which SSI tag have we been passed?
-    //
     switch(iIndex)
     {
         case SSI_INDEX_TEMPSTATE:
-            io_get_tempstate(pcInsert, iInsertLen);
+          usnprintf(pcInsert, iInsertLen, "Temperature: %d C",dPtrs2.tempCorrectedBufPtr[(*(dPtrs2.countCallsPtr)) % 8]);
             break;
 
-        case SSI_INDEX_PWMSTATE:
-            io_get_pwmstate(pcInsert, iInsertLen);
+        case SSI_INDEX_SYSSTATE:
+            usnprintf(pcInsert, iInsertLen, "Systolic Pressure: %d",dPtrs2.bloodPressCorrectedBufPtr[(*(dPtrs2.countCallsPtr)) % 8]);
             break;
 
-        case SSI_INDEX_PWMFREQ:
-            ulVal = io_get_pwmfreq();
-            usnprintf(pcInsert, iInsertLen, "%d", ulVal);
+        case SSI_INDEX_DIASTATE:
+            usnprintf(pcInsert, iInsertLen, "Diastolic Pressure: %d",dPtrs2.bloodPressCorrectedBufPtr[((*(dPtrs2.countCallsPtr)) % 8)+8]);
             break;
 
-        case SSI_INDEX_PWMDUTY:
-            ulVal = io_get_pwmdutycycle();
-            usnprintf(pcInsert, iInsertLen, "%d", ulVal);
+        case SSI_INDEX_PULSESTATE:
+            usnprintf(pcInsert, iInsertLen, "Pulse rate: %d",dPtrs2.pulseRateCorrectedBufPtr[(*(dPtrs2.countCallsPtr)) % 8]);
             break;
 
-        case SSI_INDEX_FORMVARS:
-            usnprintf(pcInsert, iInsertLen,
-                      "%sps=%d;\nls=%d;\npf=%d;\npd=%d;\n%s",
-                      JAVASCRIPT_HEADER,
-                      io_is_pwm_on(),
-                      io_is_led_on(),
-                      io_get_pwmfreq(),
-                      io_get_pwmdutycycle(),
-                      JAVASCRIPT_FOOTER);
-            break;
+//        case SSI_INDEX_EKGSTATE:
+//            usnprintf(pcInsert, iInsertLen, "EKG: %d C",dPtrs2.[(*(dPtrs2.countCallsPtr)) % 8]);
+//            break;
+            
+        case SSI_INDEX_BATTERYSTATE:
+            usnprintf(pcInsert, iInsertLen, "Battery: %d",*dPtrs2.batteryStatePtr);
+        break;
 
         default:
             usnprintf(pcInsert, iInsertLen, "??");
             break;
     }
 
-    //
     // Tell the server how many characters our insert string contains.
-    //
     return(strlen(pcInsert));
 }
 
@@ -798,19 +747,13 @@ DisplayIPAddress(unsigned long ipaddr, unsigned long ulCol,
     char pucBuf[16];
     unsigned char *pucTemp = (unsigned char *)&ipaddr;
 
-    //
     // Convert the IP Address into a string.
-    //
     usprintf(pucBuf, "%d.%d.%d.%d", pucTemp[0], pucTemp[1], pucTemp[2],
              pucTemp[3]);
 
-    //
     // Display the string.
-    //
     RIT128x96x4StringDraw(pucBuf, ulCol, ulRow, 15);
 }
-
-
 
 //*****************************************************************************
 //
@@ -825,40 +768,7 @@ lwIPHostTimerHandler(void)
 
     ulIPAddress = lwIPLocalIPAddrGet();
 
-    //
-    // If IP Address has not yet been assigned, update the display accordingly
-    //
-//    if(ulIPAddress == 0)
-//    {
-//        static int iColumn = 6;
-//
-//        //
-//        // Update status bar on the display.
-//        //
-//        RIT128x96x4Enable(1000000);
-//        if(iColumn < 12)
-//        {
-//            RIT128x96x4StringDraw(" >", 114, 24, 15);
-//            RIT128x96x4StringDraw("< ", 0, 24, 15);
-//            RIT128x96x4StringDraw("*",iColumn, 24, 7);
-//        }
-//        else
-//        {
-//            RIT128x96x4StringDraw(" *",iColumn - 6, 24, 7);
-//        }
-//
-//        iColumn += 4;
-//        if(iColumn > 114)
-//        {
-//            iColumn = 6;
-//            RIT128x96x4StringDraw(" >", 114, 24, 15);
-//        }
-//        RIT128x96x4Disable();
-//    }
-
-    //
     // Check if IP address has changed, and display if it has.
-    //
     if(ulLastIPAddress != ulIPAddress)
     {
         ulLastIPAddress = ulIPAddress;
@@ -1034,13 +944,16 @@ Timer1IntHandler(void)
 int main( void )
 {      
     prvSetupHardware();
+    xSemaphore = xSemaphoreCreateBinary();
+    if (xSemaphore != NULL ){
 
     /* Create the queue used by the OLED task.  Messages for display on the OLED
     are received via this queue. */
     xOLEDQueue = xQueueCreate( mainOLED_QUEUE_SIZE, sizeof( xOLEDMessage ) );
     
     // Create tasks
-    xTaskCreate(remoteCommunications, "RemComm Task", 500, (void*)&rPtrs, 2, NULL);
+    xTaskCreate(remoteCommunications, "RemComm Task", 100, (void*)&rPtrs, 2, NULL);
+    xTaskCreate(commandFunction, "Command Task", 200, (void*)&coPtrs, 2, &xCommandHandle);
     xTaskCreate(measure, "Measure Task", 1024, (void*)&mPtrs2, 3, NULL);
     xTaskCreate(alarm, "Warning Task", 500, (void*)&wPtrs2, 4, NULL);
     xTaskCreate(stat, "Status Task", 100, (void*)&sPtrs, 3, NULL);
@@ -1051,25 +964,22 @@ int main( void )
 
     /* Start the tasks defined within this file/specific to this demo. */
     xTaskCreate( vOLEDTask, "OLED", mainOLED_TASK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
-    
-    /* Configure the high frequency interrupt used to measure the interrupt
-    jitter time. */
-    //vSetupHighFrequencyTimer();
 
     /* Start the scheduler. */
     vTaskStartScheduler();
-
+    }
     /* Will only get here if there was insufficient memory to create the idle
     task. */
-	return 0;
+    return 0;
 }
 /*-----------------------------------------------------------*/
   
 void prvSetupHardware( void )
 {
-    // Variables used for configurations
+  // Variables used for configurations
   unsigned long ulPeriod;
   unsigned long ulPeriodPR;
+  
   /* If running on Rev A2 silicon, turn the LDO voltage up to 2.75V.  This is
   a workaround to allow the PLL to operate reliably. */
   if( DEVICE_IS_REVA2 )
@@ -1112,11 +1022,6 @@ void prvSetupHardware( void )
   GPIOPinTypeGPIOInput(GPIO_PORTF_BASE, GPIO_PIN_1);
   GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
   GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0);
-  
-  // Configure SysTick to periodically interrupt.
-//  SysTickPeriodSet(g_ulSystemClock / CLOCK_RATE);
-//  SysTickIntEnable();
-//  SysTickEnable();
   
   /* ADC BEGIN*/
   // The ADC0 peripheral must be enabled for use.
@@ -1198,29 +1103,17 @@ void prvSetupHardware( void )
   // Enable the PWM1 output signal.
   PWMOutputState(PWM_BASE,PWM_OUT_1_BIT, true);
   
+  // Enable and Reset the Ethernet Controller.
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_ETH);
+  SysCtlPeripheralReset(SYSCTL_PERIPH_ETH);
+
+  // Configure SysTick for a periodic interrupt.
+  SysTickPeriodSet(SysCtlClockGet() / SYSTICKHZ);
+  SysTickEnable();
+  SysTickIntEnable();
+
   // Enable processor interrupts.
-  //IntMasterEnable();
-  
-  // Turn on LED to indicate normal state
-  //enableVisibleAnnunciation();
-  
-
-
-    // Enable and Reset the Ethernet Controller.
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_ETH);
-    SysCtlPeripheralReset(SYSCTL_PERIPH_ETH);
-
-    //
-    // Configure SysTick for a periodic interrupt.
-    //
-    SysTickPeriodSet(SysCtlClockGet() / SYSTICKHZ);
-    SysTickEnable();
-    SysTickIntEnable();
-
-    // Enable processor interrupts.
-    IntMasterEnable();
-
-    
+  IntMasterEnable();   
 }
 /*-----------------------------------------------------------*/
 
@@ -1272,8 +1165,6 @@ void vOLEDTask( void *pvParameters )
 
   /* Initialise the OLED and display a startup message. */
   vOLEDInit( ulSSI_FREQUENCY );
-  //vOLEDStringDraw( "POWERED BY FreeRTOS", 0, 0, mainFULL_SCALE );
-  //vOLEDImageDraw( pucImage, 0, mainCHARACTER_HEIGHT + 1, bmpBITMAP_WIDTH, bmpBITMAP_HEIGHT );
 
   for( ;; )
   {
@@ -1296,37 +1187,63 @@ void vOLEDTask( void *pvParameters )
 	}
 }
 
+void commandFunction(void* data)
+{
+  commandData * coData = (commandData*)data;
+  static int displayFlag = 1;
+   
+  for( ;;)
+  {
+//    if( xSemaphoreTake( xSemaphore, 100) == pdTRUE )
+//    {
+    char command = *coData->commandBufPtr;
+    if(command != NULL)
+    {
+      if(command == 'd')
+      {
+        if (displayFlag == 1)
+        {
+          RIT128x96x4Disable();
+          displayFlag = 0;
+        }
+        else
+        {
+          RIT128x96x4Enable(1000000);
+          displayFlag = 1;
+        }
+      }
+      memset(coData->commandBufPtr, 0, sizeof(coData->commandBufPtr));
+    }
+    //}
+    vTaskSuspend(NULL);
+  }
+}
+
 void remoteCommunications(void* data)
 {  
     remCommData * rData = (remCommData*)data;
-        unsigned long ulUser0, ulUser1;
+    unsigned long ulUser0, ulUser1;
     unsigned char pucMACArray[8];
 
-//
     // Configure the hardware MAC address for Ethernet Controller filtering of
     // incoming packets.
     //
     // For the LM3S6965 Evaluation Kit, the MAC address will be stored in the
     // non-volatile USER0 and USER1 registers.  These registers can be read
     // using the FlashUserGet function, as illustrated below.
-    //
     FlashUserGet(&ulUser0, &ulUser1);
     if((ulUser0 == 0xffffffff) || (ulUser1 == 0xffffffff))
     {
-        //
         // We should never get here.  This is an error if the MAC address
         // has not been programmed into the device.  Exit the program.
-        //
         RIT128x96x4StringDraw("MAC Address", 0, 16, 15);
         RIT128x96x4StringDraw("Not Programmed!", 0, 24, 15);
         while(1);
     }
 
-    //
     // Convert the 24/24 split MAC address from NV ram into a 32/16 split
     // MAC address needed to program the hardware registers, then program
     // the MAC address into the Ethernet Controller registers.
-    //
     pucMACArray[0] = ((ulUser0 >>  0) & 0xff);
     pucMACArray[1] = ((ulUser0 >>  8) & 0xff);
     pucMACArray[2] = ((ulUser0 >> 16) & 0xff);
@@ -1334,46 +1251,29 @@ void remoteCommunications(void* data)
     pucMACArray[4] = ((ulUser1 >>  8) & 0xff);
     pucMACArray[5] = ((ulUser1 >> 16) & 0xff);
 
-    //
     // Initialze the lwIP library, using DHCP.
-    //
     lwIPInit(pucMACArray, 0, 0, 0, IPADDR_USE_DHCP);
 
-    //
     // Setup the device locator service.
-    //
     LocatorInit();
     LocatorMACAddrSet(pucMACArray);
     LocatorAppTitleSet("EK-LM3S8962 enet_io");
 
-    //
     // Initialize a sample httpd server.
-    //
     httpd_init();
 
-    //
     // Pass our tag information to the HTTP server.
-    //
     http_set_ssi_handler(SSIHandler, g_pcConfigSSITags,
                          NUM_CONFIG_SSI_TAGS);
 
-    //
     // Pass our CGI handlers to the HTTP server.
-    //
     http_set_cgi_handlers(g_psConfigCGIURIs, NUM_CONFIG_CGI_URIS);
-
-    //
-    // Initialize IO controls
-    //
-    //io_init();
+    
   for( ;; )
   {
-    
-   
-    vTaskDelay(1000);
+    vTaskResume(xCommandHandle);
+    vTaskDelay(5000);
   }
-  
-    //return;
 }
 /*-----------------------------------------------------------*/
 

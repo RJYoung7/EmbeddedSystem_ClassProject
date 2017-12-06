@@ -1308,22 +1308,19 @@
     <group>
         <name>Ethernet</name>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\cgifuncs.c</name>
+            <name>$PROJ_DIR$\cgifuncs.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\apps\httpserver_raw\httpd.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\enet_io\io.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\third_party\lwip-1.3.2\apps\httpserver_raw\httpd.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\lmi_fs.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\utils\locator.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\utils\locator.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\utils\lwiplib.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\utils\lwiplib.c</name>
         </file>
     </group>
     <group>

@@ -38,7 +38,7 @@
         <LMIFTDIfoundProbes />
     </LMIFTDIDriver>
     <DebugChecksum>
-        <Checksum>2047488437</Checksum>
+        <Checksum>3046978144</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -71,7 +71,8 @@
     <Breakpoints>
         <Bp0>_ "STD_CODE" "{$PROJ_DIR$\statusTask.c}.15.20" 0 0 0 0 "" 0 ""</Bp0>
         <Bp1>_ "STD_CODE" "{$PROJ_DIR$\remoteCommunications.c}.108.5" 0 0 0 0 "" 0 ""</Bp1>
-        <Count>2</Count>
+        <Bp2>_ "STD_CODE" "{$PROJ_DIR$\main.c}.1202.7" 1 0 0 0 "" 0 ""</Bp2>
+        <Count>3</Count>
     </Breakpoints>
     <LogFile>
         <LoggingEnabled>_ 0</LoggingEnabled>

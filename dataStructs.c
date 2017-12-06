@@ -79,6 +79,13 @@ typedef struct{
 }remotecommunication;
 #define INIT_REMOTECOMMUNICATION(X) remotecommunication X={0,0,NULL};
 
+// Datastruct for command data
+typedef struct{
+    unsigned long lStringParam;
+    char commandBuf[24];
+}command;
+#define INIT_COMMAND(X) command X={0,NULL};
+
 // Struct for TCB's
 typedef struct MyStruct 
 {

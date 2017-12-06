@@ -104,3 +104,9 @@ typedef struct
   unsigned short* batteryStatePtr;
   unsigned int* countCallsPtr;
 }remCommData;
+
+typedef struct
+{
+  unsigned long* lStringParamPtr;
+  char* commandBufPtr;
+}commandData;

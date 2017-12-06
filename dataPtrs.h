@@ -27,4 +27,6 @@ struct keypadData;
 struct communicationsData;
 
 struct remCommData;
+
+struct commandData;
 #endif
