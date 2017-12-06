@@ -147,7 +147,7 @@ void measureDiaBPArray(void* data){
   
     measureData2* measureDataPtr = (measureData2*) data;
     //unsigned int* countCalls = (*measureDataPtr).countCallsPtr;
-    //unsigned int* bloodPressRawBuf = (*measureDataPtr).bloodPressRawBufPtr;
+    unsigned int* bloodPressRawBuf = (*measureDataPtr).bloodPressRawBufPtr;
       unsigned int* countCalls = (*measureDataPtr).diaCompletePtr;
 
   //unsigned int* sysComplete = (*measureDataPtr).sysCompletePtr;
