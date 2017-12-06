@@ -20,7 +20,7 @@ typedef struct
 } measurement2;
 #define INIT_MEASUREMENT2(X) measurement2 X ={{36,NULL,NULL,NULL,NULL,NULL,NULL,NULL},{55,NULL,NULL,NULL,NULL,NULL,NULL,NULL,50,NULL,NULL,NULL,NULL,NULL,NULL,NULL},{0,NULL,NULL,NULL,NULL,NULL,NULL,NULL},0,0,0,1,1,50,0};
 
-// Project 3 display struct
+// Display struct
 typedef struct
 {
   unsigned char tempCorrectedBuf[8];

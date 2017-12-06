@@ -76,6 +76,10 @@ font-style: bold;
 <center>
 <h1 align="center">Patient Data</h1>
 </center>
+<div style="clear: both">
+    <h2 style="float: left">Name: John Smith</h2>
+    <h2 style="float: right">Doctor: Bob</h2>
+</div>
 <hr size="2" width="100%">
 <ul>
 </ul>
