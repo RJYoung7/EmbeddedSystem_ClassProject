@@ -13,7 +13,7 @@ typedef struct
   int tempDirection;
   int prDirection;
   unsigned int cuffPressRaw;
-  unsigned int* cuffFlagPtr;
+  unsigned int* cuffFlag;
   signed int EKGRawBuf[256];
   unsigned int EKGFreqBuf[16];
 
