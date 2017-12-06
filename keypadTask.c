@@ -38,6 +38,7 @@ void keypadfunction(void* data)
     unsigned short * modePtr = (*keypadDataPtr).modePtr;
     unsigned short * measurementSelectionPtr = (*keypadDataPtr).measurementSelectionPtr;
     unsigned short * selectChoicePtr = (*keypadDataPtr).selectChoicePtr;
+    unsigned int * cuffPtr = (*keypadDataPtr).cuffPressRawPtr;
     unsigned int row;
     int choice = 0;
     //Mode selection (Mode 0, main menu)
@@ -50,6 +51,23 @@ void keypadfunction(void* data)
       //else up is pressed and cursor is not on menu
       else if(g_ucSwitches==30 && *selectChoicePtr!=1){
         *selectChoicePtr = 1;
+      }
+       if(g_ucSwitches==27&&*selectChoicePtr==1){
+        if(*cuffPtr > 50){
+          *cuffPtr = (*cuffPtr *9)/10;
+        }
+        
+        if(*cuffPtr<50){
+        *cuffPtr = 50;
+        }
+      }
+      else if(g_ucSwitches==23&&*selectChoicePtr==1){
+        if(*cuffPtr<150){
+        *cuffPtr = (*cuffPtr *11)/10;
+        }
+        if(*cuffPtr>150){
+        *cuffPtr = 150;
+        }
       }
       //Check to see if a selection was made
       if(g_ucSwitches==15){
