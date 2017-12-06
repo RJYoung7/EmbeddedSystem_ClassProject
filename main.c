@@ -1,121 +1,9 @@
-/*
-    FreeRTOS V9.0.0 - Copyright (C) 2016 Real Time Engineers Ltd.
-    All rights reserved
-
-    VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
-
-    This file is part of the FreeRTOS distribution.
-
-    FreeRTOS is free software; you can redistribute it and/or modify it under
-    the terms of the GNU General Public License (version 2) as published by the
-    Free Software Foundation >>>> AND MODIFIED BY <<<< the FreeRTOS exception.
-
-    ***************************************************************************
-    >>!   NOTE: The modification to the GPL is included to allow you to     !<<
-    >>!   distribute a combined work that includes FreeRTOS without being   !<<
-    >>!   obliged to provide the source code for proprietary components     !<<
-    >>!   outside of the FreeRTOS kernel.                                   !<<
-    ***************************************************************************
-
-    FreeRTOS is distributed in the hope that it will be useful, but WITHOUT ANY
-    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-    FOR A PARTICULAR PURPOSE.  Full license text is available on the following
-    link: http://www.freertos.org/a00114.html
-
-    ***************************************************************************
-     *                                                                       *
-     *    FreeRTOS provides completely free yet professionally developed,    *
-     *    robust, strictly quality controlled, supported, and cross          *
-     *    platform software that is more than just the market leader, it     *
-     *    is the industry's de facto standard.                               *
-     *                                                                       *
-     *    Help yourself get started quickly while simultaneously helping     *
-     *    to support the FreeRTOS project by purchasing a FreeRTOS           *
-     *    tutorial book, reference manual, or both:                          *
-     *    http://www.FreeRTOS.org/Documentation                              *
-     *                                                                       *
-    ***************************************************************************
-
-    http://www.FreeRTOS.org/FAQHelp.html - Having a problem?  Start by reading
-    the FAQ page "My application does not run, what could be wrong?".  Have you
-    defined configASSERT()?
-
-    http://www.FreeRTOS.org/support - In return for receiving this top quality
-    embedded software for free we request you assist our global community by
-    participating in the support forum.
-
-    http://www.FreeRTOS.org/training - Investing in training allows your team to
-    be as productive as possible as early as possible.  Now you can receive
-    FreeRTOS training directly from Richard Barry, CEO of Real Time Engineers
-    Ltd, and the world's leading authority on the world's leading RTOS.
-
-    http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
-    including FreeRTOS+Trace - an indispensable productivity tool, a DOS
-    compatible FAT file system, and our tiny thread aware UDP/IP stack.
-
-    http://www.FreeRTOS.org/labs - Where new FreeRTOS products go to incubate.
-    Come and try FreeRTOS+TCP, our new open source TCP/IP stack for FreeRTOS.
-
-    http://www.OpenRTOS.com - Real Time Engineers ltd. license FreeRTOS to High
-    Integrity Systems ltd. to sell under the OpenRTOS brand.  Low cost OpenRTOS
-    licenses offer ticketed support, indemnification and commercial middleware.
-
-    http://www.SafeRTOS.com - High Integrity Systems also provide a safety
-    engineered and independently SIL3 certified version for use in safety and
-    mission critical applications that require provable dependability.
-
-    1 tab == 4 spaces!
-*/
-
-
-/*
- * Creates all the demo application tasks, then starts the scheduler.  The WEB
- * documentation provides more details of the standard demo application tasks.
- * In addition to the standard demo tasks, the following tasks and tests are
- * defined and/or created within this file:
- *
- * "Fast Interrupt Test" - A high frequency periodic interrupt is generated
- * using a free running timer to demonstrate the use of the
- * configKERNEL_INTERRUPT_PRIORITY configuration constant.  The interrupt
- * service routine measures the number of processor clocks that occur between
- * each interrupt - and in so doing measures the jitter in the interrupt timing.
- * The maximum measured jitter time is latched in the ulMaxJitter variable, and
- * displayed on the OLED display by the 'OLED' task as described below.  The
- * fast interrupt is configured and handled in the timertest.c source file.
- *
- * "OLED" task - the OLED task is a 'gatekeeper' task.  It is the only task that
- * is permitted to access the display directly.  Other tasks wishing to write a
- * message to the OLED send the message on a queue to the OLED task instead of
- * accessing the OLED themselves.  The OLED task just blocks on the queue waiting
- * for messages - waking and displaying the messages as they arrive.
- *
- * "Check" hook -  This only executes every five seconds from the tick hook.
- * Its main function is to check that all the standard demo tasks are still
- * operational.  Should any unexpected behaviour within a demo task be discovered
- * the tick hook will write an error to the OLED (via the OLED task).  If all the
- * demo tasks are executing with their expected behaviour then the check task
- * writes PASS to the OLED (again via the OLED task), as described above.
- *
- * "uIP" task -  This is the task that handles the uIP stack.  All TCP/IP
- * processing is performed in this task.
- */
-
-
-
-
-/*************************************************************************
- * Please ensure to read http://www.freertos.org/portlm3sx965.html
- * which provides information on configuring and running this demo for the
- * various Luminary Micro EKs.
- *************************************************************************/
-
 /* Set the following option to 1 to include the WEB server in the build.  By
 default the WEB server is excluded to keep the compiled code size under the 32K
 limit imposed by the KickStart version of the IAR compiler.  The graphics
 libraries take up a lot of ROM space, hence including the graphics libraries
 and the TCP/IP stack together cannot be accommodated with the 32K size limit. */
 #define mainINCLUDE_WEB_SERVER		0
-
 
 /* Standard includes. */
 #include <stdio.h>
@@ -128,41 +16,19 @@ and the TCP/IP stack together cannot be accommodated with the 32K size limit. */
 #include "semphr.h"
 
 /* Hardware library includes. */
-//#include "hw_memmap.h"
-//#include "hw_types.h"
 #include "hw_sysctl.h"
-//#include "inc/hw_ints.h"
-//#include "sysctl.h"
-//#include "gpio.h"
 #include "grlib.h"
 #include "rit128x96x4.h"
 #include "osram128x64x4.h"
 #include "formike128x128x16.h"
-//#include "driverlib/interrupt.h"
-//#include "driverlib/timer.h"
-//#include "driverlib/systick.h"
-//#include "driverlib/pwm.h"
 #include "adc.h"
 
 /* Demo app includes. */
-//#include "BlockQ.h"
-//#include "death.h"
-//#include "integer.h"
-//#include "blocktim.h"
-//#include "flash.h"
 #include "partest.h"
-//#include "semtest.h"
-//#include "PollQ.h"
 #include "lcd_message.h"
 #include "bitmap.h"
-//#include "GenQTest.h"
-//#include "QPeek.h"
-//#include "recmutex.h"
-//#include "IntQueue.h"
-//#include "QueueSet.h"
-//#include "EventGroupsDemo.h"
 
-/* Project 3 */
+/* Project 4 & 5 includes */
 #include "inc/hw_types.h"
 #include "computeTask.h"
 #include "dataPtrs.h"
@@ -179,13 +45,10 @@ and the TCP/IP stack together cannot be accommodated with the 32K size limit. */
 #include "dataStructs.c"
 #include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
-//#include "inc/lm3s8962.h"
 #include "measureTask.h"
 #include "serialComTask.h"
 #include "systemTimeBase.h"
 #include "warningAlarm.h"
-#include "Flags.h"
-
 #include "Flags.h"
 #include "utils/locator.h"
 #include "utils/lwiplib.h"
@@ -266,12 +129,16 @@ unsigned long auralFlag;
 unsigned long ackFlag = 0;
 unsigned long computeFlag;
 unsigned long serialFlag;
+unsigned int tempFlag = 0;
+unsigned int diaFlag = 0;
+unsigned int sysFlag = 0;
+unsigned int pulseFlag = 0;
+unsigned int iFlag = 1;
 TaskHandle_t xComputeHandle;
 TaskHandle_t xEKGHandle;
 TaskHandle_t xDisplayHandle;
 TaskHandle_t xTempHandle;
 TaskHandle_t xCommandHandle; 
-SemaphoreHandle_t xSemaphore = NULL; 
 
 //*****************************************************************************
 //
@@ -323,185 +190,6 @@ unsigned char g_ucSwitches = 0x1f;
 
 static unsigned char g_ucSwitchClockA = 0;
 static unsigned char g_ucSwitchClockB = 0;
-
-//*****************************************************************************
-//
-// The error routine that is called if the driver library encounters an error.
-//
-//*****************************************************************************
-#ifdef DEBUG
-void
-__error__(char *pcFilename, unsigned long ulLine)
-{
-}
-#endif
-
-//  Declare the globals
-INIT_MEASUREMENT2(m2);
-INIT_DISPLAY2(d2);
-INIT_STATUS(s1);
-INIT_ALARMS(a1);
-INIT_WARNING(w1);
-INIT_SCHEDULER(c1);
-INIT_KEYPAD(k1);
-INIT_REMOTECOMMUNICATION(r1); 
-INIT_COMMAND(co); 
-
-//Connect pointer structs to data
-measureData2 mPtrs2 = 
-{     
-  m2.temperatureRawBuf,
-  m2.bloodPressRawBuf,
-  m2.pulseRateRawBuf,
-  &m2.countCalls,
-  &m2.sysComplete,
-  &m2.diaComplete,
-  &m2.tempDirection,
-  &g_ulFlagPR
-};
-
-computeData2 cPtrs2=
-{
-  m2.temperatureRawBuf,
-  m2.bloodPressRawBuf,
-  m2.pulseRateRawBuf,
-  d2.tempCorrectedBuf,
-  d2.bloodPressCorrectedBuf,
-  d2.pulseRateCorrectedBuf,
-  &k1.measurementSelection,
-  &m2.countCalls
-};
-
-displayData2 dPtrs2=
-{
-  d2.tempCorrectedBuf,
-  d2.bloodPressCorrectedBuf,
-  d2.pulseRateCorrectedBuf,
-  &s1.batteryState,
-  &m2.countCalls,
-  &k1.mode,
-  &a1.tempOutOfRange,
-  &a1.bpOutOfRange,
-  &a1.pulseOutOfRange,
-  m2.EKGFreqBuf
-  
-};
-
-warningAlarmData2 wPtrs2=
-{
-  m2.temperatureRawBuf,
-  m2.bloodPressRawBuf,
-  m2.pulseRateRawBuf,
-  &s1.batteryState,
-  &a1.bpOutOfRange,
-  &a1.tempOutOfRange,
-  &a1.pulseOutOfRange,
-  &w1.bpHigh,
-  &w1.tempHigh,
-  &w1.pulseLow,
-  &w1.led,
-  &m2.countCalls,
-  &w1.previousCount,
-  &w1.pulseFlash,
-  &w1.tempFlash,
-  &w1.bpFlash,
-  &w1.auralCount
-};
-
-keypadData kPtrs=
-{
-  &k1.mode,
-  &k1.measurementSelection,
-  &k1.scroll,
-  &k1.selectChoice,
-  &k1.alarmAcknowledge
-
-};
-
-EKGData ecPtrs=
-{
-  &m2.EKGRawBuf,
-  &m2.EKGFreqBuf
-
-};
-
-statusData sPtrs=
-{  
-  &s1.batteryState
-};
-
-schedulerData schedPtrs=
-{
-  &c1.globalCounter
-};
-
-communicationsData comPtrs={
-  d2.tempCorrectedBuf,
-  d2.bloodPressCorrectedBuf,
-  d2.pulseRateCorrectedBuf,
-  &s1.batteryState,
-  &m2.countCalls
-};
-
-
- 
-remCommData rPtrs={ 
-   d2.tempCorrectedBuf, 
-   d2.bloodPressCorrectedBuf, 
-   d2.pulseRateCorrectedBuf, 
-   &s1.batteryState, 
-   &m2.countCalls 
- }; 
-
-commandData coPtrs = {
-  &co.lStringParam,
-  co.commandBuf
-};
-
-//Declare the prototypes for the tasks
-void compute(void* data);
-void measure(void* data);
-void stat(void* data);
-void alarm(void* data);
-void disp(void* data);
-void schedule(void* data);
-void keypadfunction(void* data);
-void ekgCapture(void* data);
-void ekgProcess(void* data);
-void remoteCommunications(void *data);
-void commandFunction(void *data);
-void startup();
-
-/*
- * The task that handles the uIP stack.  All TCP/IP processing is performed in
- * this task.
- */
-extern void vuIP_Task( void *pvParameters );
-
-/*
- * The display is written two by more than one task so is controlled by a
- * 'gatekeeper' task.  This is the only task that is actually permitted to
- * access the display directly.  Other tasks wanting to display a message send
- * the message to the gatekeeper.
- */
-static void vOLEDTask( void *pvParameters );
-
-/*
- * Configure the hardware for the demo.
- */
-static void prvSetupHardware( void );
-
-/*
- * Configures the high frequency timers - those used to measure the timing
- * jitter while the real time kernel is executing.
- */
-extern void vSetupHighFrequencyTimer( void );
-
-/*
- * Hook functions that can get called by the kernel.
- */
-void vApplicationStackOverflowHook( TaskHandle_t *pxTask, signed char *pcTaskName );
-void vApplicationTickHook( void );
 
 //*****************************************************************************
 // Defines for setting up the system clock.
@@ -641,6 +329,181 @@ __error__(char *pcFilename, unsigned long ulLine)
 }
 #endif
 
+//  Declare the globals
+INIT_MEASUREMENT2(m2);
+INIT_DISPLAY2(d2);
+INIT_STATUS(s1);
+INIT_ALARMS(a1);
+INIT_WARNING(w1);
+INIT_SCHEDULER(c1);
+INIT_KEYPAD(k1);
+INIT_REMOTECOMMUNICATION(r1); 
+INIT_COMMAND(co); 
+
+//Connect pointer structs to data
+measureData2 mPtrs2 = 
+{     
+  m2.temperatureRawBuf,
+  m2.bloodPressRawBuf,
+  m2.pulseRateRawBuf,
+  &m2.countCalls,
+  &m2.sysComplete,
+  &m2.diaComplete,
+  &m2.tempDirection,
+  &g_ulFlagPR
+};
+
+computeData2 cPtrs2=
+{
+  m2.temperatureRawBuf,
+  m2.bloodPressRawBuf,
+  m2.pulseRateRawBuf,
+  d2.tempCorrectedBuf,
+  d2.bloodPressCorrectedBuf,
+  d2.pulseRateCorrectedBuf,
+  &k1.measurementSelection,
+  &m2.countCalls
+};
+
+displayData2 dPtrs2=
+{
+  d2.tempCorrectedBuf,
+  d2.bloodPressCorrectedBuf,
+  d2.pulseRateCorrectedBuf,
+  &s1.batteryState,
+  &m2.countCalls,
+  &k1.mode,
+  &a1.tempOutOfRange,
+  &a1.bpOutOfRange,
+  &a1.pulseOutOfRange,
+  m2.EKGFreqBuf
+  
+};
+
+warningAlarmData2 wPtrs2=
+{
+  m2.temperatureRawBuf,
+  m2.bloodPressRawBuf,
+  m2.pulseRateRawBuf,
+  &s1.batteryState,
+  &a1.bpOutOfRange,
+  &a1.tempOutOfRange,
+  &a1.pulseOutOfRange,
+  &w1.bpHigh,
+  &w1.tempHigh,
+  &w1.pulseLow,
+  &w1.led,
+  &m2.countCalls,
+  &w1.previousCount,
+  &w1.pulseFlash,
+  &w1.tempFlash,
+  &w1.bpFlash,
+  &w1.auralCount
+};
+
+keypadData kPtrs=
+{
+  &k1.mode,
+  &k1.measurementSelection,
+  &k1.scroll,
+  &k1.selectChoice,
+  &k1.alarmAcknowledge
+
+};
+
+EKGData ecPtrs=
+{
+  &m2.EKGRawBuf,
+  &m2.EKGFreqBuf
+
+};
+
+statusData sPtrs=
+{  
+  &s1.batteryState
+};
+
+schedulerData schedPtrs=
+{
+  &c1.globalCounter
+};
+
+communicationsData comPtrs={
+  d2.tempCorrectedBuf,
+  d2.bloodPressCorrectedBuf,
+  d2.pulseRateCorrectedBuf,
+  &s1.batteryState,
+  &m2.countCalls
+};
+
+remCommData rPtrs={ 
+   d2.tempCorrectedBuf, 
+   d2.bloodPressCorrectedBuf, 
+   d2.pulseRateCorrectedBuf, 
+   &s1.batteryState, 
+   &m2.countCalls 
+ }; 
+
+commandData coPtrs = {
+  &co.lStringParam,
+  co.commandBuf
+};
+
+//Declare the prototypes for the tasks
+void compute(void* data);
+void measure(void* data);
+void stat(void* data);
+void alarm(void* data);
+void disp(void* data);
+void schedule(void* data);
+void keypadfunction(void* data);
+void ekgCapture(void* data);
+void ekgProcess(void* data);
+void remoteCommunications(void *data);
+void commandFunction(void *data);
+void startup();
+void initializeNetwork();
+
+/*
+ * The task that handles the uIP stack.  All TCP/IP processing is performed in
+ * this task.
+ */
+extern void vuIP_Task( void *pvParameters );
+
+/*
+ * The display is written two by more than one task so is controlled by a
+ * 'gatekeeper' task.  This is the only task that is actually permitted to
+ * access the display directly.  Other tasks wanting to display a message send
+ * the message to the gatekeeper.
+ */
+static void vOLEDTask( void *pvParameters );
+
+/*
+ * Configure the hardware for the demo.
+ */
+static void prvSetupHardware( void );
+
+/*
+ * Configures the high frequency timers - those used to measure the timing
+ * jitter while the real time kernel is executing.
+ */
+extern void vSetupHighFrequencyTimer( void );
+
+/*
+ * Hook functions that can get called by the kernel.
+ */
+void vApplicationStackOverflowHook( TaskHandle_t *pxTask, signed char *pcTaskName );
+void vApplicationTickHook( void );
+
+/* The queue used to send messages to the OLED task. */
+QueueHandle_t xOLEDQueue;
+
+/* The welcome text. */
+const char * const pcWelcomeMessage = "   www.FreeRTOS.org";
+
+/* Task Prototypes */
+void vTask1(void *vParameters);
+
 //*****************************************************************************
 // This CGI handler is called whenever the web browser requests settxt.cgi.
 //*****************************************************************************
@@ -718,19 +581,88 @@ SSIHandler(int iIndex, char *pcInsert, int iInsertLen)
     switch(iIndex)
     {
         case SSI_INDEX_TEMPSTATE:
-          usnprintf(pcInsert, iInsertLen, "Temperature: %d C",dPtrs2.tempCorrectedBufPtr[(*(dPtrs2.countCallsPtr)) % 8]);
+          if(*(dPtrs2.tempOutOfRangePtr) == 'Y')
+          {
+            if(tempFlag == 0)
+            {
+            usnprintf(pcInsert, iInsertLen, "Temperature: %d C",dPtrs2.tempCorrectedBufPtr[(*(dPtrs2.countCallsPtr)) % 8]);
+            tempFlag = 1;
+            }
+            else
+            {
+              usnprintf(pcInsert, iInsertLen, "Temperature: __ C");
+              tempFlag = 0;
+            }
+          
+          }
+          else if (*(dPtrs2.tempOutOfRangePtr) == 'N')
+          {
+            usnprintf(pcInsert, iInsertLen, "Temperature: %d C",dPtrs2.tempCorrectedBufPtr[(*(dPtrs2.countCallsPtr)) % 8]);
+          }
+          
             break;
 
         case SSI_INDEX_SYSSTATE:
+          if(*(dPtrs2.bpOutOfRangePtr) == 'Y')
+          {
+            if(sysFlag == 0)
+            {
             usnprintf(pcInsert, iInsertLen, "Systolic Pressure: %d mm Hg",dPtrs2.bloodPressCorrectedBufPtr[(*(dPtrs2.countCallsPtr)) % 8]);
+            sysFlag = 1;
+            }
+            else
+            {
+              usnprintf(pcInsert, iInsertLen, "Systolic Pressure: ___ mm Hg");
+              sysFlag = 0;
+            }
+          }
+          else if (*(dPtrs2.bpOutOfRangePtr) == 'N')
+          {
+            usnprintf(pcInsert, iInsertLen, "Systolic Pressure: %d mm Hg",dPtrs2.bloodPressCorrectedBufPtr[(*(dPtrs2.countCallsPtr)) % 8]);
+          }
+            
             break;
 
         case SSI_INDEX_DIASTATE:
+          if(*(dPtrs2.bpOutOfRangePtr) == 'Y')
+          {
+            if(diaFlag == 0)
+            {
             usnprintf(pcInsert, iInsertLen, "Diastolic Pressure: %d mm Hg",dPtrs2.bloodPressCorrectedBufPtr[((*(dPtrs2.countCallsPtr)) % 8)+8]);
+            diaFlag = 1;
+            }
+            else
+            {
+              usnprintf(pcInsert, iInsertLen, "Diastolic Pressure: __ mm Hg");
+              diaFlag = 0;
+            }
+          }
+          else if (*(dPtrs2.bpOutOfRangePtr) == 'N')
+          {
+            usnprintf(pcInsert, iInsertLen, "Diastolic Pressure: %d mm Hg",dPtrs2.bloodPressCorrectedBufPtr[((*(dPtrs2.countCallsPtr)) % 8)+8]);
+          }
+            
             break;
 
         case SSI_INDEX_PULSESTATE:
+          if(*(dPtrs2.pulseOutOfRangePtr) == 'Y')
+          {
+            if(pulseFlag == 0)
+            {
             usnprintf(pcInsert, iInsertLen, "Pulse rate: %d BPM",dPtrs2.pulseRateCorrectedBufPtr[(*(dPtrs2.countCallsPtr)) % 8]);
+            pulseFlag = 1;
+            }
+            else
+            {
+            usnprintf(pcInsert, iInsertLen, "Pulse rate: __ BPM");
+              pulseFlag = 0;
+            }
+          }
+          else if (*(dPtrs2.pulseOutOfRangePtr) == 'N')
+          {
+            usnprintf(pcInsert, iInsertLen, "Pulse rate: %d BPM",dPtrs2.pulseRateCorrectedBufPtr[(*(dPtrs2.countCallsPtr)) % 8]);
+          }
+
             break;
             
         case SSI_INDEX_EKGSTATE:
@@ -800,28 +732,15 @@ lwIPHostTimerHandler(void)
 }
 /*-----------------------------------------------------------*/
 
-
-
-/* The queue used to send messages to the OLED task. */
-QueueHandle_t xOLEDQueue;
-
-/* The welcome text. */
-const char * const pcWelcomeMessage = "   www.FreeRTOS.org";
-
-/* Task Prototypes */
-void vTask1(void *vParameters);
-
-/*-----------------------------------------------------------*/
-
 //*****************************************************************************
 //
 // Handles the SysTick timeout interrupt.
 //
 //*****************************************************************************
-
 void
 SysTickIntHandler(void)
 {
+  // Used for checking if button presses have occurred
   unsigned long ulData, ulDelta;
 
   // Indicate that a timer interrupt has occurred.
@@ -829,6 +748,8 @@ SysTickIntHandler(void)
   
   // Call the lwIP timer handler
   lwIPTimer(SYSTICKMS);
+  
+  // Disable the port interrupts
   portDISABLE_INTERRUPTS();
 	{
 		/* Increment the RTOS tick. */
@@ -839,6 +760,7 @@ SysTickIntHandler(void)
 			portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT;
 		}
 	}
+        // Enable the port interrupts
 	portENABLE_INTERRUPTS();
         
   // only check buttons if there is not a button pressed
@@ -884,8 +806,6 @@ SysTickIntHandler(void)
     {
         // You can watch the variable for ulDelta
         // Up = 1 Right = 8 down =2 left =4  select = 16 Bit values
-        //printf("A button was pressed %d \n", ulDelta);
-        //printf("SwitchesState %d \n", g_ucSwitches);
         HWREGBITW(&g_ulFlags, FLAG_BUTTON_PRESS) = 1;
         
     }
@@ -954,6 +874,7 @@ Timer1IntHandler(void)
  *************************************************************************/
 int main( void )
 {      
+    // Configure the hardware
     prvSetupHardware();
 
     /* Create the queue used by the OLED task.  Messages for display on the OLED
@@ -970,7 +891,7 @@ int main( void )
     xTaskCreate(keypadfunction, "Keypad Task", 500, (void*)&kPtrs, 1, NULL);
     xTaskCreate(ekgProcess, "EKG Process Task", 1024, (void*)&ecPtrs, 1, &xEKGHandle);
     xTaskCreate(remoteCommunications, "RemComm Task", 100, (void*)&rPtrs, 2, NULL); 
-    xTaskCreate(commandFunction, "Command Task", 200, (void*)&coPtrs, 2, &xCommandHandle); 
+    xTaskCreate(commandFunction, "Command Task", 200, (void*)&coPtrs, 2, &xCommandHandle);
 
     /* Start the tasks defined within this file/specific to this demo. */
     xTaskCreate( vOLEDTask, "OLED", mainOLED_TASK_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
@@ -984,11 +905,15 @@ int main( void )
 }
 /*-----------------------------------------------------------*/
   
+//*****************************************************************************
+// Configure the system hardware
+//*****************************************************************************
 void prvSetupHardware( void )
 {
-    // Variables used for configurations
+  // Variables used for configurations
   unsigned long ulPeriod;
   unsigned long ulPeriodPR;
+  
   /* If running on Rev A2 silicon, turn the LDO voltage up to 2.75V.  This is
   a workaround to allow the PLL to operate reliably. */
   if( DEVICE_IS_REVA2 )
@@ -1004,6 +929,7 @@ void prvSetupHardware( void )
           LED1        Bit 2   Output 
   */
   
+  // Assign the system clock
   g_ulSystemClock = SysCtlClockGet();
   
   // Enable the peripherals used by this example.
@@ -1016,7 +942,6 @@ void prvSetupHardware( void )
   SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
   SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOG);
   SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM);
-  SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
   
   // Configure the GPIO used to output the state of the led
   GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_0);
@@ -1071,15 +996,15 @@ void prvSetupHardware( void )
                         (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
                          UART_CONFIG_PAR_NONE));
 
-  
-  
   //**INITIALIZE TIMER INTERRUPT**//
   // Configure the 32-bit periodic timer.
   TimerConfigure(TIMER0_BASE, TIMER_CFG_32_BIT_PER);
   TimerConfigure(TIMER1_BASE, TIMER_CFG_32_BIT_PER);
   
+  // Determine the period
   ulPeriodPR =(SysCtlClockGet()/400)/200 ;
   
+  // Load the timers
   TimerLoadSet(TIMER0_BASE, TIMER_A, SysCtlClockGet()/1000);
   TimerLoadSet(TIMER1_BASE, TIMER_A, ulPeriodPR-1);
 
@@ -1199,181 +1124,142 @@ void vOLEDTask( void *pvParameters )
 }
 /*-----------------------------------------------------------*/
 
-
+//******************************************************************************
+// The command function receives and controls commands sent from the web browser
+//******************************************************************************
 void commandFunction(void* data)
-
 {
-
+  // Dereference the data struct
   commandData * coData = (commandData*)data;
 
+  // Create a flag for the 'd' command.
   static int displayFlag = 1;
-
    
-
+  // Loop forever
   for( ;;)
-
   {
-
-//    if( xSemaphoreTake( xSemaphore, 100) == pdTRUE )
-
-//    {
-
+    // Assign the char buf to a char.
     char command = *coData->commandBufPtr;
 
+    // Do nothing if no command is present
     if(command != NULL)
-
     {
-
-      if(command == 'd')
-
+      // Enable or disable display with the 'd' command
+      if(command == 'd' || command == 'D')
       {
-
+        // Disable display if flag is set to 1
         if (displayFlag == 1)
-
         {
-
+          // Disable the display
           RIT128x96x4Disable();
-
+          // Set flag to 0 for future 'd'
           displayFlag = 0;
-
         }
-
+        // Enable display if flag is 0
         else
-
         {
-
+          // Enable display
           RIT128x96x4Enable(1000000);
-
+          // Set flag to 1 for future 'd'
           displayFlag = 1;
-
         }
-
+      }
+      
+      // Enable or disable display with the 'd' command
+      if(command == 'i' || command == 'I')
+      {
+        iFlag = 1;
       }
 
+      // Clear the command buffer
       memset(coData->commandBufPtr, 0, sizeof(coData->commandBufPtr));
-
     }
 
-    //}
-
+    // Suspend task indefinitely
     vTaskSuspend(NULL);
-
   }
-
 }
 
-
-
+//*****************************************************************************
+// The remote communications task initializes the network interface, connects to 
+// and configures a local area network (LAN). Sets up a web server and handler 
+// to communicate with a remote browser.  Formats the data to be displayed and 
+// sends the formatted data over the network for display on the browser. 
+// Continually updates the displayed data at a 5 second rate.
+//******************************************************************************
 void remoteCommunications(void* data)
-
 {  
+  // Dereference the data struct
+  remCommData * rData = (remCommData*)data;
+  
+  // Used to store mac address
+  unsigned long ulUser0, ulUser1;
+  unsigned char pucMACArray[8];
 
-    remCommData * rData = (remCommData*)data;
+  // Configure the hardware MAC address for Ethernet Controller filtering of
+  // incoming packets.
+  //
+  // For the LM3S6965 Evaluation Kit, the MAC address will be stored in the
+  // non-volatile USER0 and USER1 registers.  These registers can be read
+  // using the FlashUserGet function, as illustrated below.
+  FlashUserGet(&ulUser0, &ulUser1);
 
-    unsigned long ulUser0, ulUser1;
-
-    unsigned char pucMACArray[8];
-
-
-
-    // Configure the hardware MAC address for Ethernet Controller filtering of
-
-    // incoming packets.
-
-    //
-
-    // For the LM3S6965 Evaluation Kit, the MAC address will be stored in the
-
-    // non-volatile USER0 and USER1 registers.  These registers can be read
-
-    // using the FlashUserGet function, as illustrated below.
-
-    FlashUserGet(&ulUser0, &ulUser1);
-
-    if((ulUser0 == 0xffffffff) || (ulUser1 == 0xffffffff))
-
-    {
-
-        // We should never get here.  This is an error if the MAC address
-
-        // has not been programmed into the device.  Exit the program.
-
-        RIT128x96x4StringDraw("MAC Address", 0, 16, 15);
-
-        RIT128x96x4StringDraw("Not Programmed!", 0, 24, 15);
-
-        while(1);
-
-    }
-
-
-
-    // Convert the 24/24 split MAC address from NV ram into a 32/16 split
-
-    // MAC address needed to program the hardware registers, then program
-
-    // the MAC address into the Ethernet Controller registers.
-
-    pucMACArray[0] = ((ulUser0 >>  0) & 0xff);
-
-    pucMACArray[1] = ((ulUser0 >>  8) & 0xff);
-
-    pucMACArray[2] = ((ulUser0 >> 16) & 0xff);
-
-    pucMACArray[3] = ((ulUser1 >>  0) & 0xff);
-
-    pucMACArray[4] = ((ulUser1 >>  8) & 0xff);
-
-    pucMACArray[5] = ((ulUser1 >> 16) & 0xff);
-
-
-
-    // Initialze the lwIP library, using DHCP.
-
-    lwIPInit(pucMACArray, 0, 0, 0, IPADDR_USE_DHCP);
-
-
-
-    // Setup the device locator service.
-
-    LocatorInit();
-
-    LocatorMACAddrSet(pucMACArray);
-
-    LocatorAppTitleSet("EK-LM3S8962 enet_io");
-
-
-
-    // Initialize a sample httpd server.
-
-    httpd_init();
-
-
-
-    // Pass our tag information to the HTTP server.
-
-    http_set_ssi_handler(SSIHandler, g_pcConfigSSITags,
-
-                         NUM_CONFIG_SSI_TAGS);
-
-
-
-    // Pass our CGI handlers to the HTTP server.
-
-    http_set_cgi_handlers(g_psConfigCGIURIs, NUM_CONFIG_CGI_URIS);
-
-    
-
-  for( ;; )
-
+  // Mac address not programmed
+  if((ulUser0 == 0xffffffff) || (ulUser1 == 0xffffffff))
   {
-
-    vTaskResume(xCommandHandle);
-
-    vTaskDelay(5000);
-
+      // We should never get here.  This is an error if the MAC address
+      // has not been programmed into the device.  Exit the program.
+      RIT128x96x4StringDraw("MAC Address", 0, 16, 15);
+      RIT128x96x4StringDraw("Not Programmed!", 0, 24, 15);
+      while(1);
   }
 
+  // Convert the 24/24 split MAC address from NV ram into a 32/16 split
+  // MAC address needed to program the hardware registers, then program
+  // the MAC address into the Ethernet Controller registers.
+  pucMACArray[0] = ((ulUser0 >>  0) & 0xff);
+  pucMACArray[1] = ((ulUser0 >>  8) & 0xff);
+  pucMACArray[2] = ((ulUser0 >> 16) & 0xff);
+  pucMACArray[3] = ((ulUser1 >>  0) & 0xff);
+  pucMACArray[4] = ((ulUser1 >>  8) & 0xff);
+  pucMACArray[5] = ((ulUser1 >> 16) & 0xff);
+
+  // Initialze the lwIP library, using DHCP.
+  lwIPInit(pucMACArray, 0, 0, 0, IPADDR_USE_DHCP);
+
+  // Setup the device locator service.
+  LocatorInit();
+  LocatorMACAddrSet(pucMACArray);
+  LocatorAppTitleSet("EK-LM3S8962 medical device");
+
+  // Loop Forever
+  for( ;; )
+  {
+    if(iFlag == 1)
+    {
+      initializeNetwork();
+      iFlag = 0;
+    }
+    
+    // Resume the command
+    vTaskResume(xCommandHandle);
+
+    // Delay for 5 seconds
+    vTaskDelay(5000);
+  }
+}
+
+void initializeNetwork()
+{
+    // Initialize a sample httpd server.
+    httpd_init();
+
+    // Pass our tag information to the HTTP server.
+    http_set_ssi_handler(SSIHandler, g_pcConfigSSITags,
+                         NUM_CONFIG_SSI_TAGS);
+
+    // Pass our CGI handlers to the HTTP server.
+    http_set_cgi_handlers(g_psConfigCGIURIs, NUM_CONFIG_CGI_URIS);
 }
 
 /*-----------------------------------------------------------*/
