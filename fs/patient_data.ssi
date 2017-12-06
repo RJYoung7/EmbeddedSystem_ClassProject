@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta content="text/html;charset=ISO-8869-1" http-equiv="content-type"><title>I/O Control Demo 2</title>
+<meta http-equiv="refresh" content="3">
+
+<script type="text/javascript">
+<!--
+function SetFormDefaults()
+{
+document.iocontrol.LEDOn.checked = ls;
+document.iocontrol.PWMOn.checked = ps;
+document.iocontrol.PWMFrequency.value = pf;
+document.iocontrol.PWMDutyCycle.value = pd;
+document.iocontrol.Battery.value = bt;
+}
+//-->
+</script>
+<style type="text/css">
+body
+{
+font-family: Arial;
+background-color: white;
+margin: 10px;
+padding: 0px
+}
+h1
+{
+color: #7C7369;
+font-family: Arial;
+font-size: 24pt;
+font-style: italic;
+}
+h2
+{
+color: #000000;
+font-family: Arial;
+font-size: 18pt;
+font-style: bold;
+}
+h3
+{
+color: #7C7369;
+font-family: Arial;
+font-size: 12pt;
+font-style: bold;
+}
+</style>
+</head>
+<body onload="SetFormDefaults()">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+</tr>
+</table>
+<table width="100%">
+<tbody>
+<tr>
+<td align="left" valign="top" width="25%">
+<br>
+<ul>
+<li> <a href="index.htm">About
+</a>
+<br>
+<br>
+</li>
+<li> <a href="send_command.ssi">Command
+</a>
+<br>
+<br>
+</li>
+<li><a href="patient_data.ssi">Patient Data
+<br>
+</a></li>
+</ul>
+</td>
+<td align="left" valign="top" width="75%">
+<center>
+<h1 align="center">Patient Data</h1>
+</center>
+<hr size="2" width="100%">
+<ul>
+</ul>
+<br>
+<table align="center" border="1" width="80%">
+<tbody>
+<tr>
+<td>
+<form method="get" action="iocontrol.cgi" name="iocontrol">
+<table align="center" border="0" cellpadding="2" cellspacing="2" width="100%">
+<tbody>
+<tr>
+<td align="left" valign="top"><!--#TEMPtxt--></td>
+</tr>
+<tr>
+<td align="left" valign="top"><!--#SYStxt--></td>
+</tr>
+<tr>
+<td align="left" valign="top"><!--#DIAtxt--></td>
+</tr>
+<tr>
+<td align="left" valign="top"><!--#PULSEtxt--></td>
+<tr>
+<td align="left" valign="top"><!--#EKGtxt--></td>
+</tr>
+<tr>
+<td align="left" valign="top"><!--#BATtxt--></td>
+</tr>
+</tr>
+<tr>
+<td colspan="3" rowspan="1" align="center" valign="middle">
+<input name="Update" value="Update Data" type="submit"></td>
+</tr>
+</tbody>
+</table>
+</form>
+</td>
+</tr>
+</tbody>
+</table>
+<ul>
+</ul>
+<br>
+</td>
+</tr>
+</tbody>
+</table>
+</body></html>
