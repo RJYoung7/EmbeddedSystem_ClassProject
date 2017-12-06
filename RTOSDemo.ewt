@@ -1224,6 +1224,18 @@
             <name>$PROJ_DIR$\displayTask.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\ekgCaptureTask.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\ekgCaptureTask.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\ekgProcessTask.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\ekgProcessTask.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Common\Minimal\EventGroupsDemo.c</name>
         </file>
         <file>
@@ -1306,6 +1318,24 @@
         </file>
     </group>
     <group>
+        <name>Ethernet</name>
+        <file>
+            <name>$PROJ_DIR$\cgifuncs.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\third_party\lwip-1.3.2\apps\httpserver_raw\httpd.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\lmi_fs.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\locator.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\lwiplib.c</name>
+        </file>
+    </group>
+    <group>
         <name>Library files</name>
         <file>
             <name>$PROJ_DIR$\..\Common\drivers\LuminaryMicro\IAR\driverlib.a</name>
@@ -1317,7 +1347,13 @@
             <name>$PROJ_DIR$\..\Common\drivers\LuminaryMicro\IAR\grlib.a</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\StellarisWare\inc\hw_types.h</name>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\..\StellarisWare\inc\hw_types.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\optfft.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\optfft.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\osram128x64x4.c</name>
@@ -1360,39 +1396,6 @@
         <name>System files</name>
         <file>
             <name>$PROJ_DIR$\startup_ewarm.c</name>
-        </file>
-    </group>
-    <group>
-        <name>uIP files</name>
-        <file>
-            <name>$PROJ_DIR$\webserver\emac.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\webserver\http-strings.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\webserver\httpd-cgi.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\webserver\httpd-fs.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\webserver\httpd.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Common\ethernet\uIP\uip-1.0\uip\psock.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Common\ethernet\uIP\uip-1.0\uip\timer.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Common\ethernet\uIP\uip-1.0\uip\uip.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Common\ethernet\uIP\uip-1.0\uip\uip_arp.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\webserver\uIP_Task.c</name>
         </file>
     </group>
 </project>

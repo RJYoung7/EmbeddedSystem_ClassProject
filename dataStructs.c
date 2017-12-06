@@ -14,6 +14,9 @@ typedef struct
   int prDirection;
   unsigned int cuffPressRaw;
   unsigned int* cuffFlagPtr;
+  signed int EKGRawBuf[256];
+  unsigned int EKGFreqBuf[16];
+
 } measurement2;
 #define INIT_MEASUREMENT2(X) measurement2 X ={{36,NULL,NULL,NULL,NULL,NULL,NULL,NULL},{55,NULL,NULL,NULL,NULL,NULL,NULL,NULL,50,NULL,NULL,NULL,NULL,NULL,NULL,NULL},{0,NULL,NULL,NULL,NULL,NULL,NULL,NULL},0,0,0,1,1,80,0};
 
@@ -72,6 +75,21 @@ typedef struct{
   unsigned short alarmAcknowledge;
 }keypad;
 #define INIT_KEYPAD(X) keypad X={0,0,0,1,0};
+
+// Datastruct for remote communications data 
+typedef struct{ 
+  unsigned long ulIPAddress; 
+  long lStringParam; 
+  unsigned char pcDecodedString[24]; 
+}remotecommunication; 
+#define INIT_REMOTECOMMUNICATION(X) remotecommunication X={0,0,NULL}; 
+
+// Datastruct for command data 
+typedef struct{ 
+  unsigned long lStringParam; 
+  char commandBuf[24]; 
+}command; 
+#define INIT_COMMAND(X) command X={0,NULL}; 
 
 // Struct for TCB's
 typedef struct MyStruct 

@@ -1177,7 +1177,7 @@
                     <item>temp</item>
                     <item>measureDataPtr</item>
                     <item>m2</item>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>

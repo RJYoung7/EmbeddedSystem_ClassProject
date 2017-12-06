@@ -41,6 +41,7 @@ typedef struct
   unsigned char* tempOutOfRangePtr;
   unsigned char* bpOutOfRangePtr;
   unsigned char* pulseOutOfRangePtr;
+  unsigned int* EKGFreqBufPtr;
 }displayData2;
 
 // Holds pointers to the variables associated with warning/alarm task:
@@ -98,3 +99,27 @@ typedef struct
   unsigned short* batteryStatePtr;
   unsigned int* countCallsPtr;
 }communicationsData;
+
+typedef struct
+{
+  signed int* EKGRawBufPtr;
+  signed int* EKGFreqBufPtr;
+
+}EKGData;
+
+ 
+// Holds pointers to the variables associated with communications task: 
+typedef struct 
+{ 
+  unsigned char* tempCorrectedBufPtr; 
+  unsigned char* bloodPressCorrectedBufPtr; 
+  unsigned char* prCorrectedBufPtr; 
+  unsigned short* batteryStatePtr; 
+  unsigned int* countCallsPtr; 
+}remCommData; 
+
+typedef struct 
+{ 
+  unsigned long* lStringParamPtr; 
+  char* commandBufPtr; 
+}commandData; 

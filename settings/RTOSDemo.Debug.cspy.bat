@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\settings\RTOSDemo.Debug.general.xcl" --backend -f "C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\settings\RTOSDemo.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\settings\RTOSDemo.Debug.general.xcl" --backend -f "C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\settings\RTOSDemo.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\settings\RTOSDemo.Debug.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\RJYou\OneDrive\Desktop\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\settings\RTOSDemo.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\settings\RTOSDemo.Debug.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\boards\ek-lm3s8962\FreeRTOSv9.0.0\FreeRTOS\Demo\Final_Project\settings\RTOSDemo.Debug.driver.xcl" 
 
 @echo off 
 :end

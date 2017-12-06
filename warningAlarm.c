@@ -370,7 +370,7 @@ void enableVisibleAnnunciation()
 //  GPIOPinWrite(GPIO_PORTF_BASE, 0x04, 1);
 //  GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, 0x01);
 //  GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_1, 0x01);
-  GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_0, 0x01);
+//  GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_0, 0x01);
   
   return;
 }
