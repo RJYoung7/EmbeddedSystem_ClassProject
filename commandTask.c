@@ -22,7 +22,10 @@ E - error response
   signed int* EKGRawBuf = (*EKGDataPtr).EKGRawBufPtr;
   for( ;; )
   {
-    //Generate the sine wave
+    //Check Data for commands
+    //Verify commands is in the list of cases
+    //Show error if not
+    // Use cases to call various sub functions. 
 
       vTaskDelay(5000);
   }
