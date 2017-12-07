@@ -34,6 +34,8 @@ C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstrum
 -I
 C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\ports\stellaris\include
 -I
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\apps\httpserver_raw
+-I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc\c
@@ -69,6 +71,8 @@ C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstrum
 C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\apps
 -I
 C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\ports\stellaris\include
+-I
+C:\Users\RJYou\OneDrive\Documents\IAR Embedded Workbench\arm\8.20.1\TexasInstruments\Stellaris\third_party\lwip-1.3.2\apps\httpserver_raw
 -D__CHAR_BITS__=8
 -D__CHAR_MAX__=0xff
 -D__CHAR_MIN__=0
