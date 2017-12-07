@@ -140,6 +140,7 @@ TaskHandle_t xEKGHandle;
 TaskHandle_t xDisplayHandle;
 TaskHandle_t xTempHandle;
 TaskHandle_t xCommandHandle; 
+TaskHandle_t xMeasureHandle; 
 
 //*****************************************************************************
 //
@@ -896,7 +897,7 @@ int main( void )
     xOLEDQueue = xQueueCreate( mainOLED_QUEUE_SIZE, sizeof( xOLEDMessage ) );
     
     // Create tasks
-    xTaskCreate(measure, "Measure Task", 1024, (void*)&mPtrs2, 3, NULL);
+    xTaskCreate(measure, "Measure Task", 1024, (void*)&mPtrs2, 3, &xMeasureHandle);
     xTaskCreate(alarm, "Warning Task", 500, (void*)&wPtrs2, 4, NULL);
     xTaskCreate(stat, "Status Task", 100, (void*)&sPtrs, 3, NULL);
     xTaskCreate(ekgCapture, "EKG Caputre Task", 500, (void*)&ecPtrs, 2, NULL);
@@ -1179,10 +1180,46 @@ void commandFunction(void* data)
         }
       }
       
+      //Start Measurements
+      else if(command == 's' || command == 'S')
+      {
+        
+          vTaskResume(xMeasureHandle);
+        
+      }
+      
+      // Stop Measurements
+      else if(command == 'p' || command == 'P')
+      {
+        
+          vTaskSuspend(xMeasureHandle);
+        
+      }
+      
+      // Retrieve latest Measurement Data
+      else if(command == 'm' || command == 'M')
+      {
+        
+          //Set a flag to obtain latest mesasurement data
+        
+      }
+      
+      // Retrieve latest warning/alarm data
+      else if(command == 'w' || command == 'W')
+      {
+        
+          //Set a flag to get latest warning data
+        
+      }
+      
       // Enable or disable display with the 'd' command
-      if(command == 'i' || command == 'I')
+      else if(command == 'i' || command == 'I')
       {
         iFlag = 1;
+      }
+      else{
+        // no valid command value was sent.
+        commandErrorFlag = 1;
       }
 
       // Clear the command buffer

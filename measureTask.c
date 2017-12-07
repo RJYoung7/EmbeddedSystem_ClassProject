@@ -17,10 +17,8 @@ void measure(void* data)
   {
     measureData2 * measureDataPtr = (measureData2*) data;
  
-    //xTaskCreate(measureTempArray, "Measure Temp", 500, (void*)data, 1, &xTempHandle);
+ 
     measureTempArray(data);
-    //measureSysBPArray(data);
-    //measureDiaBPArray(data);
     measurePRArray(data);
     
     //if sys/dia pressure interupt flagged
@@ -103,36 +101,14 @@ Do: Places Systolic into array indexes 0-7
 */
 void measureSysBPArray(void* data){
     measureData2* measureDataPtr = (measureData2*) data;
-    //printf("This is a measureSysBp Function \n");
-    //Check to see if the DiaBp is complete and repeat the original proces
-    //unsigned int* countCalls = (*measureDataPtr).countCallsPtr;
+   
     unsigned int* countCalls = (*measureDataPtr).sysCompletePtr;
     
     unsigned int* bloodPressRawBuf  = (*measureDataPtr).bloodPressRawBufPtr;
-   // unsigned int* sysComplete = (*measureDataPtr).sysCompletePtr;
-    //unsigned int* diaComplete = (*measureDataPtr).diaCompletePtr;
-    //find the current index of the array based on call count. 
-    //unsigned int sysLast = (*countCalls) %8;
+   
     unsigned int sysNext = (*countCalls +1) %8;
     /*
-    if (1==*diaComplete && bloodPressRawBuf[sysLast]>85){
-      bloodPressRawBuf[sysNext] = 55;
-      *diaComplete = 0;
-    }
-    // If the sysBP <= 100 its not complete so we increment it
-    if (100 >= bloodPressRawBuf[sysLast] ){
-      if  ( (*countCalls % 2) == 0){
-        bloodPressRawBuf[sysNext] = bloodPressRawBuf[sysLast] + 3;
-      }
-      else{
-        bloodPressRawBuf[sysNext] = bloodPressRawBuf[sysLast] - 1;
-      }
-    }
-    // If sysBP > 100 it is complete and we wait til diaCompletes
-    if (100 < bloodPressRawBuf[sysNext]){
-      *sysComplete = 1;
-    }
-    */
+    
    bloodPressRawBuf[sysNext] = *(*measureDataPtr).cuffPressRawPtr;
 
 };
@@ -154,26 +130,7 @@ void measureDiaBPArray(void* data){
     //unsigned int* diaComplete = (*measureDataPtr).diaCompletePtr;
     //unsigned int diaLast = ((*countCalls) %8) + 8;
     unsigned int diaNext = ((*countCalls +1) %8) + 8;
-/*
-  //Check to see if the DiaBp is complete and repeat the original proces
-     if (1==*sysComplete && bloodPressRawBuf[diaLast]<40){
-      bloodPressRawBuf[diaNext] = 50;
-      *sysComplete = 0;
-      }
-    // If diastolyic BP is above 40 it is not complete
-    if (40 <= bloodPressRawBuf[diaLast]){
-      if  ( ((*countCalls) % 2) == 0){
-        bloodPressRawBuf[diaNext] = bloodPressRawBuf[diaLast] - 2;
-      }
-      else{
-        bloodPressRawBuf[diaNext] = bloodPressRawBuf[diaLast] + 1;
-      }
-    } 
-    // diastolyic BP drops below 40 and is complete
-    if (40 > bloodPressRawBuf[diaNext]){
-      *diaComplete = 1;
-    }
-    */
+
   bloodPressRawBuf[diaNext] = *(*measureDataPtr).cuffPressRawPtr;
 
 };
