@@ -108,6 +108,9 @@ font-style: bold;
 <tr>
 <td align="left" valign="top"><!--#BATtxt--></td>
 </tr>
+<tr>
+<td align="left" valign="top"><!--#ERRtxt--></td>
+</tr>
 </tr>
 <tr>
 <td colspan="3" rowspan="1" align="center" valign="middle">

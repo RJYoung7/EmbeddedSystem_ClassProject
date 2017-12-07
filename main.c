@@ -226,6 +226,7 @@ extern void httpd_init(void);
 #define SSI_INDEX_PULSESTATE   3
 #define SSI_INDEX_EKGSTATE      4
 #define SSI_INDEX_BATTERYSTATE  5
+#define SSI_INDEX_ERRORSTATE    6
 
 //*****************************************************************************
 // This array holds all the strings that are to be recognized as SSI tag
@@ -241,7 +242,8 @@ static const char *g_pcConfigSSITags[] =
     "DIAtxt",       // SSI_INDEX_DIASTATE
     "PULSEtxt",       // SSI_INDEX_PULSESTATE
     "EKGtxt",         // SSI_INDEX_EKGSTATE
-    "BATtxt"       // SSI_INDEX_BATSTATE
+    "BATtxt",       // SSI_INDEX_BATSTATE
+    "ERRtxt"         // SSI_INDEX_ERRORSTATE
 };
 
 //*****************************************************************************
@@ -677,6 +679,16 @@ SSIHandler(int iIndex, char *pcInsert, int iInsertLen)
         case SSI_INDEX_BATTERYSTATE:
             usnprintf(pcInsert, iInsertLen, "Battery: %d",*dPtrs2.batteryStatePtr);
         break;
+        
+        case SSI_INDEX_ERRORSTATE:
+            if(commandErrorFlag == 1)
+            {
+              usnprintf(pcInsert, iInsertLen, "Invalid Command");
+              commandErrorFlag = 0;
+            }
+            else
+              usnprintf(pcInsert, iInsertLen, "");
+        break;
 
         default:
             usnprintf(pcInsert, iInsertLen, "??");
@@ -721,7 +733,6 @@ lwIPHostTimerHandler(void)
     if(ulLastIPAddress != ulIPAddress)
     {
         ulLastIPAddress = ulIPAddress;
-        //RIT128x96x4Enable(1000000);
         RIT128x96x4StringDraw("                       ", 0, 16, 15);
         RIT128x96x4StringDraw("                       ", 0, 24, 15);
         RIT128x96x4StringDraw("IP:   ", 0, 16, 15);
@@ -732,7 +743,6 @@ lwIPHostTimerHandler(void)
         DisplayIPAddress(ulIPAddress, 36, 24);
         ulIPAddress = lwIPLocalGWAddrGet();
         DisplayIPAddress(ulIPAddress, 36, 32);
-        //RIT128x96x4Disable();
     }
 }
 /*-----------------------------------------------------------*/
