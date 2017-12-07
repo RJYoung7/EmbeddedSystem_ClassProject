@@ -107,7 +107,6 @@ void measureSysBPArray(void* data){
     unsigned int* bloodPressRawBuf  = (*measureDataPtr).bloodPressRawBufPtr;
    
     unsigned int sysNext = (*countCalls +1) %8;
-    /*
     
    bloodPressRawBuf[sysNext] = *(*measureDataPtr).cuffPressRawPtr;
 

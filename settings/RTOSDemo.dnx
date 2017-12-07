@@ -38,7 +38,7 @@
         <LMIFTDIfoundProbes />
     </LMIFTDIDriver>
     <DebugChecksum>
-        <Checksum>4208431502</Checksum>
+        <Checksum>3985760696</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -70,7 +70,7 @@
     </DisassembleMode>
     <Breakpoints>
         <Bp0>_ "STD_CODE" "{$PROJ_DIR$\statusTask.c}.15.20" 0 0 0 0 "" 0 ""</Bp0>
-        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\main.c}.1255.5" 1 0 0 0 "" 0 ""</Bp1>
+        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\measureTask.c}.21.5" 1 0 0 0 "" 0 ""</Bp1>
         <Count>2</Count>
     </Breakpoints>
     <LogFile>
